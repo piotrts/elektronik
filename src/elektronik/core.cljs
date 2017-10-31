@@ -15,6 +15,12 @@
    [{:instance/id 1
      :instance/factory addition-component-factory}]})
 
+(def stylesheet
+  {:svg #js{:border "1px solid black"}
+   :instance #js{:fill :gray
+                 :strokeWidth 1
+                 :stroke :black}})
+
 (defui Factory
   static om/Ident
   (ident [this props]
@@ -37,7 +43,8 @@
   (render [this]
     (let [{:keys [instance/id]
            {:keys [factory/name :factory/desc]} :instance/factory} (om/props this)]
-      (dom/div nil id ", " name ", " desc))))
+      (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50}
+        id ", " name ", " desc))))
 
 (def instance (om/factory Instance))
 
@@ -49,7 +56,7 @@
   Object
   (render [this]
     (let [{:keys [instances/list]} (om/props this)]
-      (dom/div nil
+      (dom/svg #js{:style (:svg stylesheet) :width 500 :height 500}
         (map instance list)))))
 
 (defmulti read om/dispatch)
