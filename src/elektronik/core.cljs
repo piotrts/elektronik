@@ -60,7 +60,6 @@
         {:instances/list ~instance-query}]))
   Object
   (render [this]
-    (js/alert (om/props this))
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen} (om/props this)]
       (dom/svg #js{:style (:svg stylesheet) :width width :height height}
