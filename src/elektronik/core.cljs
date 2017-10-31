@@ -43,8 +43,10 @@
   (render [this]
     (let [{:keys [instance/id]
            {:keys [factory/name :factory/desc]} :instance/factory} (om/props this)]
-      (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50}
-        id ", " name ", " desc))))
+      (dom/g nil
+        (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50})
+        (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
+          id ", " name ", " desc)))))
 
 (def instance (om/factory Instance))
 
