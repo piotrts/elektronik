@@ -44,7 +44,12 @@
       `[:instance/id {:instance/factory ~factory-query}]))
   Object
   (render-rect [this]
-    (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50}))
+    (let [{:keys [instance/id]} (om/props this)]
+      (dom/rect #js{:style (:instance stylesheet)
+                    :onClick (fn [_]
+                               (om/transact! this `[(selection/add-instance {:instance/id ~id})]))
+                    :width 50
+                    :height 50})))
   (render-text [this]
     (let [{:keys [instance/id]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
@@ -67,7 +72,9 @@
   (render [this]
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen} (om/props this)]
-      (dom/svg #js{:style (:svg stylesheet) :width width :height height}
+      (dom/svg #js{:style (:svg stylesheet)
+                   :width width
+                   :height height}
         (map instance list)))))
 
 (defmulti read om/dispatch)
@@ -82,6 +89,9 @@
     (if-let [[_ v] (find st k)]
       {:value v}
       {:value :not-found})))
+
+(defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [instance/id]}]
+  {:action (swap! state update :instances/selected conj id)})
 
 (def parser
   (om/parser {:read   read
