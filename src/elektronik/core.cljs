@@ -56,7 +56,7 @@
       (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
         id ", " name ", " desc)))
   (render [this]
-    (dom/g #js{}
+    (dom/g nil
       (.render-rect this)
       (.render-text this))))
 
