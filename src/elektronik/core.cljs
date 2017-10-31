@@ -19,7 +19,7 @@
 
 (def stylesheet
   {:svg #js{:border "1px solid black"}
-   :instance #js{:fill :gray
+   :instance #js{:fill "gray"
                  :strokeWidth 1
                  :stroke "black"}})
 
