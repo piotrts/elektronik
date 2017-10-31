@@ -43,13 +43,17 @@
     (let [factory-query (om/get-query Factory)]
       `[:instance/id {:instance/factory ~factory-query}]))
   Object
-  (render [this]
+  (render-rect [this]
+    (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50}))
+  (render-text [this]
     (let [{:keys [instance/id]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
-      (dom/g nil
-        (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50})
-        (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
-          id ", " name ", " desc)))))
+      (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
+        id ", " name ", " desc)))
+  (render [this]
+    (dom/g #js{}
+      (.render-rect this)
+      (.render-text this))))
 
 (def instance (om/factory Instance))
 
