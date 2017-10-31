@@ -11,7 +11,9 @@
             :desc "Addition"})
 
 (def app-state
-  {:instances/list
+  {:ui/screen {:width 500
+               :height 500}
+   :instances/list
    [{:instance/id 1
      :instance/factory addition-component-factory}]})
 
@@ -19,7 +21,7 @@
   {:svg #js{:border "1px solid black"}
    :instance #js{:fill :gray
                  :strokeWidth 1
-                 :stroke :black}})
+                 :stroke "black"}})
 
 (defui Factory
   static om/Ident
@@ -42,7 +44,7 @@
   Object
   (render [this]
     (let [{:keys [instance/id]
-           {:keys [factory/name :factory/desc]} :instance/factory} (om/props this)]
+           {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
       (dom/g nil
         (dom/rect #js{:style (:instance stylesheet) :width 50 :height 50})
         (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
@@ -54,11 +56,14 @@
   static om/IQuery
   (query [this]
     (let [instance-query (om/get-query Instance)]
-      `[{:instances/list ~instance-query}]))
+      `[:ui/screen
+        {:instances/list ~instance-query}]))
   Object
   (render [this]
-    (let [{:keys [instances/list]} (om/props this)]
-      (dom/svg #js{:style (:svg stylesheet) :width 500 :height 500}
+    (js/alert (om/props this))
+    (let [{:keys [instances/list]
+           {:keys [width height]} :ui/screen} (om/props this)]
+      (dom/svg #js{:style (:svg stylesheet) :width width :height height}
         (map instance list)))))
 
 (defmulti read om/dispatch)
@@ -70,7 +75,7 @@
 
 (defmethod read :default [{:keys [state]} k params]
   (let [st @state]
-    (if-let [[_ v] (find state k)]
+    (if-let [[_ v] (find st k)]
       {:value v}
       {:value :not-found})))
 
