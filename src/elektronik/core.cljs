@@ -11,14 +11,15 @@
             :desc "Addition"})
 
 (def app-state
-  {:ui/screen {:width 500
-               :height 500}
+  {:ui/screen {:width "100%"
+               :height "100%"}
+   :instances/selected []
    :instances/list
    [{:instance/id 1
      :instance/factory addition-component-factory}]})
 
 (def stylesheet
-  {:svg #js{:border "1px solid black"}
+  {:svg #js{}
    :instance #js{:fill "gray"
                  :strokeWidth 1
                  :stroke "black"}})
