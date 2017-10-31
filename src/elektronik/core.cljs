@@ -91,7 +91,7 @@
       {:value :not-found})))
 
 (defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [instance/id]}]
-  {:action (swap! state update :instances/selected conj id)})
+  {:action (swap! state update :instances/selected conj [:instances/by-id id])})
 
 (def parser
   (om/parser {:read   read
