@@ -16,7 +16,7 @@
                :height "100%"}
    :instances/selected []
    :instances/list
-   [{:instance/id (om/tempid)
+   [{:db/id (om/tempid)
      :instance/factory addition-component-factory
      :instance/x 0
      :instance/y 0}]})
@@ -39,24 +39,27 @@
 (defui Instance
   static om/Ident
   (ident [this props]
-    (let [{:keys [instance/id]} props]
+    (let [{:keys [db/id]} props]
       [:instances/by-id id]))
   static om/IQuery
   (query [query]
     (let [factory-query (om/get-query Factory)]
-      `[:instance/id {:instance/factory ~factory-query}]))
+      `[:db/id :instance/x :instance/y {:instance/factory ~factory-query}]))
   Object
   (render-rect [this]
-    (let [{:keys [instance/id]} (om/props this)]
+    (let [{:keys [db/id instance/x instance/y]} (om/props this)]
       (dom/rect #js{:style (:instance stylesheet)
                     :onClick (fn [_]
-                               (om/transact! this `[(selection/add-instance {:instance/id ~id})]))
+                               (om/transact! this `[(selection/add-instance {:db/id ~id}) :instance/list]))
+                    :x x
+                    :y y
                     :width 50
                     :height 50})))
   (render-text [this]
-    (let [{:keys [instance/id]
+    (let [{:keys [db/id instance/x instance/y]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
-      (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
+      (println x y)
+      (dom/text #js{:x x :y y :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
         (str id) ", " name ", " desc)))
   (render [this]
     (dom/g nil
@@ -102,24 +105,29 @@
       {:value v}
       {:value :not-found})))
 
-(defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [instance/id]}]
+(defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [db/id]}]
   (let [ident [:instances/by-id id]]
     {:action #(swap! state update :instances/selected conj ident)}))
 
 (defmethod mutate 'instance/create [{:keys [state]} _ {:keys [instance/x instance/y]}]
-  (let [new-instance #:instance{:id (om/tempid)
+  (let [tempid (om/tempid)
+        ident  [:instances/by-id tempid]
+        new-instance #:instance{:db/id tempid
                                 :factory addition-component-factory
                                 :x x
                                 :y y}]
-    {:action #(swap! state update :instances/list conj new-instance)}))
+    {:action (fn []
+               (swap! state assoc-in ident new-instance)
+               (swap! state update :instances/list conj ident))}))
 
 (def parser
   (om/parser {:read   read
-              :mutate mutate
-              :normalize true}))
+              :mutate mutate}))
 
 (def reconciler
-  (om/reconciler {:state  app-state
-                  :parser parser}))
+  (om/reconciler {:state     app-state
+                  :parser    parser
+                  :normalize true
+                  :id-key    :db/id}))
 
 (om/add-root! reconciler Root (gdom/getElement "app"))
