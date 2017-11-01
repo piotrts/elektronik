@@ -104,8 +104,7 @@
 
 (defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [instance/id]}]
   (let [ident [:instances/by-id id]]
-    (when (not-any? #(= ident %) (:instances/selected @state)) ;; O(n)
-      {:action #(swap! state update :instances/selected conj ident)})))
+    {:action #(swap! state update :instances/selected conj ident)}))
 
 (defmethod mutate 'instance/create [{:keys [state]} _ {:keys [instance/x instance/y]}]
   (let [new-instance #:instance{:id (om/tempid)
