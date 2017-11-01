@@ -1,7 +1,8 @@
 (ns elektronik.core
   (:require [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
-            [goog.dom :as gdom]))
+            [goog.dom :as gdom]
+            [goog.style :as gstyle]))
 
 (enable-console-print!)
 
@@ -16,7 +17,9 @@
    :instances/selected []
    :instances/list
    [{:instance/id 1
-     :instance/factory addition-component-factory}]})
+     :instance/factory addition-component-factory
+     :instance/x 0
+     :instance/y 0}]})
 
 (def stylesheet
   {:svg #js{}
@@ -54,7 +57,7 @@
     (let [{:keys [instance/id]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
       (dom/text #js{:x 0 :y 0 :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
-        id ", " name ", " desc)))
+        (str id) ", " name ", " desc)))
   (render [this]
     (dom/g nil
       (.render-rect this)
@@ -72,10 +75,19 @@
   (render [this]
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen} (om/props this)]
-      (dom/svg #js{:style (:svg stylesheet)
-                   :width width
-                   :height height}
-        (map instance list)))))
+        (dom/svg #js{:ref "svg-container"
+                     :style (:svg stylesheet)
+                     :width "100%"
+                     :height "100%"
+                     :onDoubleClick (fn [ev]
+                                      (let [svg-node (om/react-ref this "svg-container")
+                                            target   (.-target ev)]
+                                        (when (= svg-node target)
+                                          (let [position (gstyle/getRelativePosition ev svg-node)
+                                                x (.-x position)
+                                                y (.-y position)]
+                                            (om/transact! this `[(instance/create {:instance/x ~x :instance/y ~y})])))))}
+          (map instance list)))))
 
 (defmulti read om/dispatch)
 (defmulti mutate om/dispatch)
@@ -93,7 +105,14 @@
 (defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [instance/id]}]
   (let [ident [:instances/by-id id]]
     (when (not-any? #(= ident %) (:instances/selected @state)) ;; O(n)
-      {:action (swap! state update :instances/selected conj ident)})))
+      {:action #(swap! state update :instances/selected conj ident)})))
+
+(defmethod mutate 'instance/create [{:keys [state]} _ {:keys [instance/x instance/y]}]
+  (let [new-instance #:instance{:id (om/tempid)
+                                :factory addition-component-factory
+                                :x x
+                                :y y}]
+    {:action #(swap! state update :instances/list conj new-instance)}))
 
 (def parser
   (om/parser {:read   read
