@@ -16,7 +16,7 @@
                :height "100%"}
    :instances/selected []
    :instances/list
-   [{:instance/id 1
+   [{:instance/id (om/tempid)
      :instance/factory addition-component-factory
      :instance/x 0
      :instance/y 0}]})
