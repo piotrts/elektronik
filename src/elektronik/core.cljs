@@ -58,9 +58,8 @@
   (render-text [this]
     (let [{:keys [db/id instance/x instance/y]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
-      (println x y)
-      (dom/text #js{:x x :y y :stroke "none" :fill "red" :alignmentBaseline "hanging" :fontSize 15}
-        (str id) ", " name ", " desc)))
+      (dom/text #js{:x x :y y :stroke "none" :fill "white" :alignmentBaseline "hanging" :fontSize 20}
+        name)))
   (render [this]
     (dom/g nil
       (.render-rect this)
