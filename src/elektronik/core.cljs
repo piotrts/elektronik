@@ -75,6 +75,14 @@
       `[:ui/screen
         {:instances/list ~instance-query}]))
   Object
+  (onDoubleClick [this ev]
+    (let [svg-node (om/react-ref this "svg-container")
+          target   (.-target ev)]
+      (when (= svg-node target)
+        (let [position (gstyle/getRelativePosition ev svg-node)
+              x (.-x position)
+              y (.-y position)]
+          (om/transact! this `[(instance/create {:instance/x ~x :instance/y ~y})])))))
   (render [this]
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen} (om/props this)]
@@ -82,14 +90,7 @@
                      :style (:svg stylesheet)
                      :width "100%"
                      :height "100%"
-                     :onDoubleClick (fn [ev]
-                                      (let [svg-node (om/react-ref this "svg-container")
-                                            target   (.-target ev)]
-                                        (when (= svg-node target)
-                                          (let [position (gstyle/getRelativePosition ev svg-node)
-                                                x (.-x position)
-                                                y (.-y position)]
-                                            (om/transact! this `[(instance/create {:instance/x ~x :instance/y ~y})])))))}
+                     :onDoubleClick #(.onDoubleClick this %)}
           (map instance list)))))
 
 (defmulti read om/dispatch)
