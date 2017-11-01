@@ -75,7 +75,7 @@
       `[:ui/screen
         {:instances/list ~instance-query}]))
   Object
-  (onDoubleClick [this ev]
+  (on-double-click [this ev]
     (let [svg-node (om/react-ref this "svg-container")
           target   (.-target ev)]
       (when (= svg-node target)
@@ -90,7 +90,7 @@
                      :style (:svg stylesheet)
                      :width "100%"
                      :height "100%"
-                     :onDoubleClick #(.onDoubleClick this %)}
+                     :onDoubleClick #(.on-double-click this %)}
           (map instance list)))))
 
 (defmulti read om/dispatch)
