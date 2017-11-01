@@ -18,8 +18,8 @@
    :instances/list
    [{:db/id (om/tempid)
      :instance/factory addition-component-factory
-     :instance/x 0
-     :instance/y 0}]})
+     :instance/x 10
+     :instance/y 10}]})
 
 (def stylesheet
   {:svg #js{}
