@@ -15,11 +15,14 @@
   {:ui/screen {:width "100%"
                :height "100%"}
    :instances/selected []
-   :instances/list
-   [{:db/id (om/tempid)
-     :instance/factory addition-component-factory
-     :instance/x 10
-     :instance/y 10}]})
+   :instances/list [{:db/id (om/tempid)
+                     :instance/factory addition-component-factory
+                     :instance/x 10
+                     :instance/y 10}
+                    {:db/id (om/tempid)
+                     :instance/factory addition-component-factory
+                     :instance/x 110
+                     :instance/y 10}]})
 
 (def stylesheet
   {:svg #js{}
