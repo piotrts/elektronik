@@ -11,6 +11,11 @@
             :name "+"
             :desc "Addition"})
 
+(def subtraction-component-factory
+  #:factory{:type :math/subtraction
+            :name "-"
+            :desc "Subtraction"})
+
 (def app-state
   {:ui/screen {:width "100%"
                :height "100%"}
@@ -20,7 +25,7 @@
                      :instance/x 10
                      :instance/y 10}
                     {:db/id (om/tempid)
-                     :instance/factory addition-component-factory
+                     :instance/factory subtraction-component-factory
                      :instance/x 110
                      :instance/y 10}]})
 
@@ -29,6 +34,19 @@
    :instance #js{:fill "gray"
                  :strokeWidth 1
                  :stroke "black"}})
+
+(defui Toolbar
+  Object
+  (render [this]
+    (let [{:keys [factories/list]} (om/props this)]
+      (dom/div nil
+        (map (fn [factory]
+               (let [{:keys [factory/name factory/type]} factory]
+                 (dom/button #js{:key (str "toolbar-factory-" name)}
+                   name)))
+             list)))))
+
+(def toolbar (om/factory Toolbar))
 
 (defui Factory
   static om/Ident
@@ -73,8 +91,10 @@
 (defui Root
   static om/IQuery
   (query [this]
-    (let [instance-query (om/get-query Instance)]
+    (let [factory-query (om/get-query Factory)
+          instance-query (om/get-query Instance)]
       `[:ui/screen
+        {:factories/list ~factory-query}
         {:instances/list ~instance-query}]))
   Object
   (on-double-click [this ev]
@@ -86,17 +106,24 @@
               y (.-y position)]
           (om/transact! this `[(instance/create {:instance/x ~x :instance/y ~y})])))))
   (render [this]
-    (let [{:keys [instances/list]
-           {:keys [width height]} :ui/screen} (om/props this)]
+    (let [props (om/props this)
+          {:keys [instances/list]
+           {:keys [width height]} :ui/screen} props]
+      (dom/div nil
+        (toolbar props)
         (dom/svg #js{:ref "svg-container"
                      :style (:svg stylesheet)
                      :width "100%"
                      :height "100%"
                      :onDoubleClick #(.on-double-click this %)}
-          (map instance list)))))
+          (map instance list))))))
 
 (defmulti read om/dispatch)
 (defmulti mutate om/dispatch)
+
+(defmethod read :factories/list [{:keys [query state]} k _]
+  (let [st @state]
+    {:value (vals (get st :factories/by-type))}))
 
 (defmethod read :instances/list [{:keys [query state]} k _]
   (let [st @state]
