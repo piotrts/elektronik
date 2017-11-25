@@ -1,5 +1,6 @@
 (ns elektronik.core
-  (:require [om.next :as om :refer-macros [defui]]
+  (:require [clojure.pprint :as pprint]
+            [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
             [goog.dom :as gdom]
             [goog.style :as gstyle]))
@@ -34,6 +35,15 @@
    :instance #js{:fill "gray"
                  :strokeWidth 1
                  :stroke "black"}})
+
+(defui QueryInspector
+  Object
+  (render [this]
+    (let [props (om/props this)]
+      (dom/pre nil
+        (with-out-str (pprint/pprint props))))))
+
+(def query-inspector (om/factory QueryInspector))
 
 (defui Toolbar
   Object
@@ -111,6 +121,7 @@
            {:keys [width height]} :ui/screen} props]
       (dom/div #js{:id "elektronik"}
         (toolbar props)
+        (query-inspector props)
         (dom/svg #js{:ref "svg-container"
                      :style (:svg stylesheet)
                      :width "100%"
@@ -159,5 +170,5 @@
                   :parser    parser
                   :normalize true
                   :id-key    :db/id}))
-
+@reconciler
 (om/add-root! reconciler Root (gdom/getElement "app"))
