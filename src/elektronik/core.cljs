@@ -109,7 +109,7 @@
     (let [props (om/props this)
           {:keys [instances/list]
            {:keys [width height]} :ui/screen} props]
-      (dom/div nil
+      (dom/div #js{:id "elektronik"}
         (toolbar props)
         (dom/svg #js{:ref "svg-container"
                      :style (:svg stylesheet)
