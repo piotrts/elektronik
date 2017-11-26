@@ -37,19 +37,20 @@
                  :strokeWidth 1
                  :stroke "black"}})
 
+(defn toolbar-button [x factory]
+  (let [{:keys [factory/name factory/type]} factory]
+    (dom/button #js{:key (str "toolbar-factory-" name)
+                    :onClick (fn [_]
+                               (om/transact! x `[(instance/create {:instance/type ~type})]))}
+
+                name)))
+
 (defui Toolbar
   Object
   (render [this]
     (let [{:keys [factories/list]} (om/props this)]
       (dom/div nil
-        (map (fn [factory]
-               (let [{:keys [factory/name factory/type]} factory]
-                 (dom/button #js{:key (str "toolbar-factory-" name)
-                                 :onClick (fn [_]
-                                            (om/transact! this `[(instance/create {:instance/type ~type})]))}
-
-                   name)))
-             list)))))
+        (map #(toolbar-button this %) list)))))
 
 (def toolbar (om/factory Toolbar))
 
