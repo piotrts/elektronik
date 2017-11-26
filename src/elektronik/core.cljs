@@ -1,5 +1,6 @@
 (ns elektronik.core
   (:require [elektronik.query-inspector :as query-inspector]
+            [elektronik.state-inspector :as state-inspector]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
             [goog.dom :as gdom]
@@ -112,7 +113,9 @@
            {:keys [width height]} :ui/screen} props]
       (dom/div #js{:id "elektronik"}
         (toolbar props)
-        (query-inspector/query-inspector props)
+        (dom/div #js{:id "panels"}
+          (query-inspector/query-inspector props)
+          (state-inspector/state-inspector props))
         (dom/svg #js{:ref "svg-container"
                      :style (:svg stylesheet)
                      :width "100%"

@@ -21,10 +21,9 @@ div#elektronik {
   height: 100%;
 }
 
-div#query-inspector {
+div#panels {
   position: absolute;
   right: 0;
   font-size: 80%;
+  width: 400px;
 }
-
-div#query-inspector.key
