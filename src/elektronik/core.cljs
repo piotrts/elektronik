@@ -114,7 +114,7 @@
         (let [position (gstyle/getRelativePosition ev svg-node)
               x (.-x position)
               y (.-y position)]
-          (om/transact! this `[(instance/create #:instance{:x ~x :y ~y :type :math/addition})])))))
+          (om/transact! this `[(instance/create #:instance{:type :math/addition :x ~x :y ~y})])))))
   (render [this]
     (let [props (om/props this)
           {:keys [instances/list]
@@ -150,7 +150,7 @@
   (let [ident [:instances/by-id id]]
     {:action #(swap! state update :instances/selected conj ident)}))
 
-(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/x instance/y instance/type]}]
+(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/type instance/x instance/y]}]
   (let [x (or x (rand-int 500))
         y (or y (rand-int 500))
         tempid (om/tempid)
