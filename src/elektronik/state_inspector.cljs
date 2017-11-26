@@ -11,13 +11,11 @@
     (let [props (om/props this)
           expanded? (om/get-state this :expanded?)]
       (dom/div #js{:id "state-inspector"}
-        (dom/button #js{:onClick (fn [_]
-                                   (om/set-state! this {:expanded? (not expanded?)}))}
+        (dom/button #js{:onClick #(om/set-state! this {:expanded? (not expanded?)})}
           (if expanded?
             "Hide"
             "Show"))
-        (dom/button #js{:onClick (fn [_]
-                                   (.forceUpdate this))}
+        (dom/button #js{:onClick #(.forceUpdate this)}
           "Refresh")
         (when expanded?
           (dom/pre nil
