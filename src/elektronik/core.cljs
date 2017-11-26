@@ -147,16 +147,17 @@
   (let [ident [:instances/by-id id]]
     {:action #(swap! state update :instances/selected conj ident)}))
 
-(defmethod mutate 'instance/create [{:keys [state]} _ {:keys [instance/x instance/y]}]
+(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/x instance/y]}]
   (let [tempid (om/tempid)
-        ident  [:instances/by-id tempid]
+        instance-ident [:instances/by-id tempid]
+        factory-ident [:factories/by-type :math/addition]
         new-instance #:instance{:db/id tempid
-                                :factory addition-component-factory
+                                :factory factory-ident
                                 :x x
                                 :y y}]
     {:action (fn []
-               (swap! state assoc-in ident new-instance)
-               (swap! state update :instances/list conj ident))}))
+               (swap! state assoc-in instance-ident new-instance)
+               (swap! state update :instances/list conj instance-ident))}))
 
 (def parser
   (om/parser {:read   read
