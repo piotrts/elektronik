@@ -44,7 +44,10 @@
       (dom/div nil
         (map (fn [factory]
                (let [{:keys [factory/name factory/type]} factory]
-                 (dom/button #js{:key (str "toolbar-factory-" name)}
+                 (dom/button #js{:key (str "toolbar-factory-" name)
+                                 :onClick (fn [_]
+                                            (om/transact! this `[(instance/create {:instance/type ~type})]))}
+
                    name)))
              list)))))
 
@@ -147,10 +150,13 @@
   (let [ident [:instances/by-id id]]
     {:action #(swap! state update :instances/selected conj ident)}))
 
-(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/x instance/y]}]
-  (let [tempid (om/tempid)
+
+(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/x instance/y instance/type]}]
+  (let [x (or x (rand-int 500))
+        y (or y (rand-int 500))
+        tempid (om/tempid)
         instance-ident [:instances/by-id tempid]
-        factory-ident [:factories/by-type :math/addition]
+        factory-ident [:factories/by-type type]
         new-instance #:instance{:db/id tempid
                                 :factory factory-ident
                                 :x x
