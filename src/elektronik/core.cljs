@@ -114,7 +114,7 @@
         (let [position (gstyle/getRelativePosition ev svg-node)
               x (.-x position)
               y (.-y position)]
-          (om/transact! this `[(instance/create {:instance/x ~x :instance/y ~y})])))))
+          (om/transact! this `[(instance/create #:instance{:x ~x :y ~y :type :math/addition})])))))
   (render [this]
     (let [props (om/props this)
           {:keys [instances/list]
