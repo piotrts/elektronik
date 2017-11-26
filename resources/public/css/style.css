@@ -20,3 +20,11 @@ div#elektronik {
   width: 100%;
   height: 100%;
 }
+
+div#query-inspector {
+  position: absolute;
+  right: 0;
+  font-size: 80%;
+}
+
+div#query-inspector.key
