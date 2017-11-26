@@ -90,6 +90,11 @@
 
 (def instance (om/factory Instance))
 
+(defn panels [props]
+  (dom/div #js{:id "panels"}
+    (query-inspector/query-inspector props)
+    (state-inspector/state-inspector props)))
+
 (defui Root
   static om/IQuery
   (query [this]
@@ -113,9 +118,7 @@
            {:keys [width height]} :ui/screen} props]
       (dom/div #js{:id "elektronik"}
         (toolbar props)
-        (dom/div #js{:id "panels"}
-          (query-inspector/query-inspector props)
-          (state-inspector/state-inspector props))
+        (panels props)
         (dom/svg #js{:ref "svg-container"
                      :style (:svg stylesheet)
                      :width "100%"
