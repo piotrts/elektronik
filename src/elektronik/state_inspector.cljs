@@ -16,6 +16,9 @@
           (if expanded?
             "Hide"
             "Show"))
+        (dom/button #js{:onClick (fn [_]
+                                   (.forceUpdate this))}
+          "Refresh")
         (when expanded?
           (dom/pre nil
             (with-out-str
