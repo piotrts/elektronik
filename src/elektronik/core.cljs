@@ -166,6 +166,12 @@
                (swap! state assoc-in instance-ident new-instance)
                (swap! state update :instances/list conj instance-ident))}))
 
+;(defn transpile-static [state])
+;  (let [resolve-instance (fn [ident])]))
+;                           (get-in state ident))]))
+;        {:keys [links/list]} state]))
+;    (resolve-instance (ffirst list))))
+
 (def parser
   (om/parser
     {:read read
