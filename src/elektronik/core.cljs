@@ -19,17 +19,20 @@
             :desc "Subtraction"})
 
 (def app-state
-  {:ui/screen {:width "100%"
-               :height "100%"}
-   :instances/selected []
-   :instances/list [{:db/id (om/tempid)
-                     :instance/factory addition-component-factory
-                     :instance/x 10
-                     :instance/y 10}
-                    {:db/id (om/tempid)
-                     :instance/factory subtraction-component-factory
-                     :instance/x 110
-                     :instance/y 10}]})
+  (let [instance-1-id (om/tempid)
+        instance-2-id (om/tempid)]
+    {:ui/screen {:width "100%"
+                 :height "100%"}
+     :instances/selected []
+     :instances/list [{:db/id instance-1-id
+                       :instance/factory addition-component-factory
+                       :instance/x 10
+                       :instance/y 10}
+                      {:db/id instance-2-id
+                       :instance/factory subtraction-component-factory
+                       :instance/x 110
+                       :instance/y 10}]
+     :links/list [[[:instances/by-id instance-1-id] [:instances/by-id instance-2-id]]]}))
 
 (def stylesheet
   {:instance #js{:fill "gray"
