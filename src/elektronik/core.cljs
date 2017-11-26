@@ -32,8 +32,7 @@
                      :instance/y 10}]})
 
 (def stylesheet
-  {:svg #js{}
-   :instance #js{:fill "gray"
+  {:instance #js{:fill "gray"
                  :strokeWidth 1
                  :stroke "black"}})
 
@@ -151,7 +150,6 @@
   (let [ident [:instances/by-id id]]
     {:action #(swap! state update :instances/selected conj ident)}))
 
-
 (defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/x instance/y instance/type]}]
   (let [x (or x (rand-int 500))
         y (or y (rand-int 500))
@@ -167,13 +165,15 @@
                (swap! state update :instances/list conj instance-ident))}))
 
 (def parser
-  (om/parser {:read   read
-              :mutate mutate}))
+  (om/parser
+    {:read read
+     :mutate mutate}))
 
 (def reconciler
-  (om/reconciler {:state     app-state
-                  :parser    parser
-                  :normalize true
-                  :id-key    :db/id}))
+  (om/reconciler
+    {:state app-state
+     :parser parser
+     :normalize true
+     :id-key :db/id}))
 
 (om/add-root! reconciler Root (gdom/getElement "app"))
