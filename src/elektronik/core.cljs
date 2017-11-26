@@ -43,7 +43,7 @@
                     :onClick (fn [_]
                                (om/transact! x `[(instance/create {:instance/type ~type})]))}
 
-                name)))
+      name)))
 
 (defui Toolbar
   Object
