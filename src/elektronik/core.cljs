@@ -24,9 +24,11 @@
     {:ui/screen {:width "100%"
                  :height "100%"}
      :panels/list [{:panel/id :query-inspector
-                    :panel/name "Query Inspector"}
+                    :panel/name "Query Inspector"
+                    :panel/expanded? true}
                    {:panel/id :state-inspector
-                    :panel/name "State Inspector"}]
+                    :panel/name "State Inspector"
+                    :panel/expanded? true}]
      :instances/selected []
      :instances/list [{:db/id instance-1-id
                        :instance/factory addition-component-factory
@@ -99,11 +101,11 @@
 
 (def instance (om/factory Instance))
 
-(defn panel-id->factory [panel-id]
+(def panel-id->component
   {:query-inspector query-inspector/QueryInspector
    :state-inspector state-inspector/StateInspector})
 
-(defn panel-id->component [panel-id]
+(def panel-id->factory
   {:query-inspector query-inspector/query-inspector
    :state-inspector state-inspector/state-inspector})
 
@@ -114,36 +116,35 @@
       [:panels/by-id id]))
   static om/IQuery
   (query [this]
-    [:panel/id :panel/name])
+    [:panel/id :panel/name :panel/expanded?])
   Object
   (componentWillUpdate [this next-props _]
     (let [{:keys [panel/id]} next-props
           component (panel-id->component id)
           subquery (om/get-query component)]
-      (om/update-query! this conj subquery)))
+      (when (seq subquery)
+        (om/update-query! this update :query conj subquery))))
   (render [this]
-    (let [{:keys [panel/id] :as panel-props} (om/props this)]
-      (dom/span #js{:id id}
-        (case id
-          :query-inspector (query-inspector/query-inspector panel-props)
-          :state-inspector (state-inspector/state-inspector panel-props))))))
+    (let [{:keys [panel/id panel/expanded?] :as panel-props} (om/props this)]
+      (dom/div #js{:id id
+                   :className "panel"}
+        (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
+          (if expanded?
+            "Hide"
+            "Show"))
+        (when expanded?
+          (case id
+            :query-inspector (query-inspector/query-inspector panel-props)
+            :state-inspector (state-inspector/state-inspector panel-props)))))))
 
 (def panel (om/factory Panel))
 
 (defui Panels
-  static om/IQuery
-  (query [this]
-    (let [panel-query (om/get-query Panel)]
-      {:panels/list panel-query}))
   Object
   (render [this]
     (let [{:keys [panels/list] :as props} (om/props this)]
       (dom/div #js{:id "panels"}
-        (println "ooo" list)
-        (map (fn [panel-props]
-               (js/console.log "ppp" panel-props)
-               (panel panel-props))
-             list)))))
+        (map panel list)))))
 
 (def panels (om/factory Panels))
 
@@ -152,11 +153,11 @@
   (query [this]
     (let [factory-query (om/get-query Factory)
           instance-query (om/get-query Instance)
-          panels-query (om/get-query Panels)]
+          panel-query (om/get-query Panel)]
       `[:ui/screen
         {:factories/list ~factory-query}
         {:instances/list ~instance-query}
-        ~panels-query]))
+        {:panels/list ~panel-query}]))
   Object
   (on-double-click [this ev]
     (let [svg-node (om/react-ref this "svg-container")
@@ -218,6 +219,10 @@
     {:action (fn []
                (swap! state assoc-in instance-ident new-instance)
                (swap! state update :instances/list conj instance-ident))}))
+
+(defmethod mutate 'panel/toggle [{:keys [state]} _ {:keys [panel/id]}]
+  (let [ident [:panels/by-id id]]
+    {:action #(swap! state update-in (conj ident :panel/expanded?) not)}))
 
 ;(defn transpile-static [state])
 ;  (let [resolve-instance (fn [ident])]))

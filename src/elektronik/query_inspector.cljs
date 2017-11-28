@@ -5,18 +5,10 @@
 
 (defui QueryInspector
   Object
-  (initLocalState [this]
-    {:expanded? true})
   (render [this]
-    (let [props (om/props this)
-          expanded? (om/get-state this :expanded?)]
+    (let [props (om/props this)]
       (dom/div #js{:id "query-inspector"}
-        (dom/button #js{:onClick #(om/set-state! this {:expanded? (not expanded?)})}
-          (if expanded?
-            "Hide"
-            "Show"))
-        (when expanded?
-          (dom/pre nil
-            (with-out-str (pprint/pprint props))))))))
+        (dom/pre nil
+          (with-out-str (pprint/pprint props)))))))
 
 (def query-inspector (om/factory QueryInspector))
