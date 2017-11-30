@@ -101,14 +101,6 @@
 
 (def instance (om/factory Instance))
 
-(def panel-id->component
-  {:query-inspector query-inspector/QueryInspector
-   :state-inspector state-inspector/StateInspector})
-
-(def panel-id->factory
-  {:query-inspector query-inspector/query-inspector
-   :state-inspector state-inspector/state-inspector})
-
 (defui Panel
   static om/Ident
   (ident [this props]
@@ -120,8 +112,9 @@
   Object
   (componentWillUpdate [this next-props _]
     (let [{:keys [panel/id]} next-props
-          component (panel-id->component id)
+          component ((om/shared this :panel-id->component) id)
           subquery (om/get-query component)]
+      (println subquery)
       (when (seq subquery)
         (om/update-query! this update :query conj subquery))))
   (render [this]
@@ -232,6 +225,14 @@
 ;        {:keys [links/list]} state]))
 ;    (resolve-instance (ffirst list))))
 
+(def panel-id->component
+  {:query-inspector query-inspector/QueryInspector
+   :state-inspector state-inspector/StateInspector})
+
+(def panel-id->factory
+  {:query-inspector query-inspector/query-inspector
+   :state-inspector state-inspector/state-inspector})
+
 (def parser
   (om/parser
     {:read read
@@ -242,6 +243,8 @@
     {:state app-state
      :parser parser
      :normalize true
+     :shared {:panel-id->component panel-id->component
+              :panel-id->factory panel-id->factory}
      :id-key :db/id}))
 
 (om/add-root! reconciler Root (gdom/getElement "app"))
