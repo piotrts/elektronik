@@ -142,6 +142,28 @@
 
 (def panels (om/factory Panels))
 
+(def pointer-state (atom :none))
+
+(defn pointer-event->pointer-state [ev]
+  (let [state @pointer-state
+        type (.-type ev)]
+    (case [state type]
+      [:none "mousedown"] :down
+      [:none "mousemove"] :none
+      [:none "mouseup"] :none
+      [:down "mousedown"] :down
+      [:down "mousemove"] :drag
+      [:down "mouseup"] :select
+      [:drag "mousedown"] :none
+      [:drag "mousemove"] :drag
+      [:drag "mouseup"] :none
+      [:select "mousedown"] :down
+      [:select "mousemove"] :drag
+      [:select "mouseup"] :select)))
+
+(defn pointer-events-processor [component ev]
+  (println (reset! pointer-state (pointer-event->pointer-state ev))))
+
 (defui Root
   static om/IQuery
   (query [this]
@@ -153,14 +175,14 @@
         {:instances/list ~instance-query}
         {:panels/list ~panel-query}]))
   Object
-  (on-double-click [this ev]
-    (let [svg-node (om/react-ref this "svg-container")
-          target   (.-target ev)]
-      (when (= svg-node target)
-        (let [position (gstyle/getRelativePosition ev svg-node)
-              x (.-x position)
-              y (.-y position)]
-          (om/transact! this `[(instance/create #:instance{:type :math/addition :x ~x :y ~y})])))))
+  ;(on-double-click [this ev])
+  ;  (let [svg-node (om/react-ref this "svg-container")]))
+  ;        target   (.-target ev)]))
+  ;    (when (= svg-node target))))
+  ;      (let [position (gstyle/getRelativePosition ev svg-node)]))))
+  ;            x (.-x position)]))))
+  ;            y (.-y position)]))))
+  ;        (om/transact! this `[(instance/create #:instance{:type :math/addition :x ~x :y ~y})])))))
   (render [this]
     (let [props (om/props this)
           {:keys [instances/list]
@@ -172,7 +194,9 @@
                      :style (:svg stylesheet)
                      :width "100%"
                      :height "100%"
-                     :onDoubleClick #(.on-double-click this %)}
+                     :onMouseDown #(pointer-events-processor this %)
+                     :onMouseMove #(pointer-events-processor this %)
+                     :onMouseUp #(pointer-events-processor this %)}
           (map instance list))))))
 
 (defmulti read om/dispatch)
