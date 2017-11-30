@@ -114,7 +114,6 @@
     (let [{:keys [panel/id]} next-props
           component ((om/shared this :panel-id->component) id)
           subquery (om/get-query component)]
-      (println subquery)
       (when (seq subquery)
         (om/update-query! this update :query conj subquery))))
   (render [this]
