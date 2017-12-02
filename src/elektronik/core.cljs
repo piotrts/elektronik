@@ -117,7 +117,8 @@
       (when (seq subquery)
         (om/update-query! this update :query conj subquery))))
   (render [this]
-    (let [{:keys [panel/id panel/expanded? panel/name] :as panel-props} (om/props this)]
+    (let [{:keys [panel/id panel/expanded? panel/name] :as panel-props} (om/props this)
+          factory ((om/shared this :panel-id->factory) id)]
       (dom/div #js{:id id
                    :className "panel"}
         (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
@@ -127,9 +128,7 @@
           " "
           name)
         (when expanded?
-          (case id
-            :query-inspector (query-inspector/query-inspector panel-props)
-            :state-inspector (state-inspector/state-inspector panel-props)))))))
+          (factory panel-props))))))
 
 (def panel (om/factory Panel))
 
