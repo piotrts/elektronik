@@ -122,7 +122,7 @@
 (defui Panels
   Object
   (render [this]
-    (let [{:keys [panels/list] :as props} (om/props this)]
+    (let [{:keys [panels/list]} (om/props this)]
       (dom/div #js{:id "panels"}
         (map panel list)))))
 
