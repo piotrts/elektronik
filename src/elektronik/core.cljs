@@ -167,9 +167,8 @@
       (dom/text #js{:x x :y y :stroke "none" :fill "white" :alignmentBaseline "hanging" :fontSize 20}
         name)))
   (render [this]
-    (let [props (om/props this)
-          {:keys [instances/list]
-           {:keys [width height]} :ui/screen} props]
+    (let [{:keys [instances/list]
+           {:keys [width height]} :ui/screen} (om/props this)]
       (dom/svg #js{:ref "svg-container"
                    :style (:svg stylesheet)
                    :width "100%"
