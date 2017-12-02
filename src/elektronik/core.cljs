@@ -164,6 +164,23 @@
 (defn pointer-events-processor [component ev]
   (println (reset! pointer-state (pointer-event->pointer-state ev))))
 
+(defui SVGRenderer
+  Object
+  (render [this]
+    (let [props (om/props this)
+          {:keys [instances/list]
+           {:keys [width height]} :ui/screen} props]
+      (dom/svg #js{:ref "svg-container"
+                   :style (:svg stylesheet)
+                   :width "100%"
+                   :height "100%"
+                   :onMouseDown #(pointer-events-processor this %)
+                   :onMouseMove #(pointer-events-processor this %)
+                   :onMouseUp #(pointer-events-processor this %)}
+        (map instance list)))))
+
+(def svg-renderer (om/factory SVGRenderer))
+
 (defui Root
   static om/IQuery
   (query [this]
@@ -184,20 +201,11 @@
   ;            y (.-y position)]))))
   ;        (om/transact! this `[(instance/create #:instance{:type :math/addition :x ~x :y ~y})])))))
   (render [this]
-    (let [props (om/props this)
-          {:keys [instances/list]
-           {:keys [width height]} :ui/screen} props]
+    (let [props (om/props this)]
       (dom/div #js{:id "elektronik"}
         (toolbar props)
         (panels props)
-        (dom/svg #js{:ref "svg-container"
-                     :style (:svg stylesheet)
-                     :width "100%"
-                     :height "100%"
-                     :onMouseDown #(pointer-events-processor this %)
-                     :onMouseMove #(pointer-events-processor this %)
-                     :onMouseUp #(pointer-events-processor this %)}
-          (map instance list))))))
+        (svg-renderer props)))))
 
 (defmulti read om/dispatch)
 (defmulti mutate om/dispatch)
