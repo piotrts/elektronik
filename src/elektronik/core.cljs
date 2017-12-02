@@ -1,6 +1,7 @@
 (ns elektronik.core
   (:require [elektronik.query-inspector :as query-inspector]
             [elektronik.state-inspector :as state-inspector]
+            [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
             [goog.dom :as gdom]
@@ -81,8 +82,9 @@
       `[:db/id :instance/x :instance/y {:instance/factory ~factory-query}]))
   Object
   (render [this]
-    (let [{:keys [instance-render-rect instance-render-text]} (om/get-computed this)]
-      (dom/g nil
+    (let [{:keys [db/id]} (om/props this)
+          {:keys [instance-render-rect instance-render-text]} (om/get-computed this)]
+      (dom/g #js{:data-instance-id (str id)}
         (instance-render-rect this)
         (instance-render-text this)))))
 
@@ -130,6 +132,19 @@
 
 (def pointer-state (atom :none))
 
+(reader/register-tag-parser! 'om/id #(first %))
+
+(defn get-element-data-instance-id [e]
+  (aget (.-dataset e) "instanceId"))
+
+(defn ev->instance-db-id [ev]
+  (some-> ev
+    .-target
+    (gdom/getAncestor get-element-data-instance-id true 2)
+    get-element-data-instance-id
+    reader/read-string
+    om/tempid))
+
 (defn pointer-event->pointer-state [ev]
   (let [state @pointer-state
         type (.-type ev)]
@@ -148,15 +163,17 @@
       [:select "mouseup"] :select)))
 
 (defn pointer-events-processor [component ev]
-  (println (reset! pointer-state (pointer-event->pointer-state ev))))
+  (let [new-pointer-state (pointer-event->pointer-state ev)]
+    (if (= :select new-pointer-state)
+      (let [instance-db-id (ev->instance-db-id ev)]
+        (om/transact! component `[(selection/add-instance {:db/id ~instance-db-id}) :instance/list])))
+    (reset! pointer-state new-pointer-state)))
 
 (defui SVGRenderer
   Object
   (instance-render-rect [_ this]
     (let [{:keys [db/id instance/x instance/y]} (om/props this)]
       (dom/rect #js{:style (:instance stylesheet)
-                    :onClick (fn [_]
-                               (om/transact! this `[(selection/add-instance {:db/id ~id}) :instance/list]))
                     :x x
                     :y y
                     :width 50
