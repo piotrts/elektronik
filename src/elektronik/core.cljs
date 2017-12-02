@@ -112,13 +112,13 @@
   Object
   (componentWillUpdate [this next-props _]
     (let [{:keys [panel/id]} next-props
-          component ((om/shared this :panel-id->component) id)
-          subquery (om/get-query component)]
-      (when (seq subquery)
-        (om/update-query! this update :query conj subquery))))
+          panel-subcomponent ((om/shared this :panel-id->component) id)
+          panel-subquery (om/get-query panel-subcomponent)]
+      (when (seq panel-subquery)
+        (om/update-query! this update :query conj panel-subquery))))
   (render [this]
     (let [{:keys [panel/id panel/expanded? panel/name] :as panel-props} (om/props this)
-          factory ((om/shared this :panel-id->factory) id)]
+          panel-subfactory ((om/shared this :panel-id->factory) id)]
       (dom/div #js{:id id
                    :className "panel"}
         (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
@@ -128,7 +128,7 @@
           " "
           name)
         (when expanded?
-          (factory panel-props))))))
+          (panel-subfactory panel-props))))))
 
 (def panel (om/factory Panel))
 
