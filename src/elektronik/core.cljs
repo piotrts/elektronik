@@ -82,7 +82,6 @@
   Object
   (render [this]
     (let [{:keys [instance-render-rect instance-render-text]} (om/get-computed this)]
-      (js/console.log ".." (om/get-computed this))
       (dom/g nil
         (instance-render-rect this)
         (instance-render-text this)))))
@@ -171,8 +170,6 @@
     (let [props (om/props this)
           {:keys [instances/list]
            {:keys [width height]} :ui/screen} props]
-      (js/console.log (.-instance-render-rect this)
-                      (.-instance-render-text this))
       (dom/svg #js{:ref "svg-container"
                    :style (:svg stylesheet)
                    :width "100%"
