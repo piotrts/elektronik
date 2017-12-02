@@ -80,24 +80,12 @@
     (let [factory-query (om/get-query Factory)]
       `[:db/id :instance/x :instance/y {:instance/factory ~factory-query}]))
   Object
-  (render-rect [this]
-    (let [{:keys [db/id instance/x instance/y]} (om/props this)]
-      (dom/rect #js{:style (:instance stylesheet)
-                    :onClick (fn [_]
-                               (om/transact! this `[(selection/add-instance {:db/id ~id}) :instance/list]))
-                    :x x
-                    :y y
-                    :width 50
-                    :height 50})))
-  (render-text [this]
-    (let [{:keys [db/id instance/x instance/y]
-           {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
-      (dom/text #js{:x x :y y :stroke "none" :fill "white" :alignmentBaseline "hanging" :fontSize 20}
-        name)))
   (render [this]
-    (dom/g nil
-      (.render-rect this)
-      (.render-text this))))
+    (let [{:keys [instance-render-rect instance-render-text]} (om/get-computed this)]
+      (js/console.log ".." (om/get-computed this))
+      (dom/g nil
+        (instance-render-rect this)
+        (instance-render-text this)))))
 
 (def instance (om/factory Instance))
 
@@ -165,10 +153,26 @@
 
 (defui SVGRenderer
   Object
+  (instance-render-rect [_ this]
+    (let [{:keys [db/id instance/x instance/y]} (om/props this)]
+      (dom/rect #js{:style (:instance stylesheet)
+                    :onClick (fn [_]
+                               (om/transact! this `[(selection/add-instance {:db/id ~id}) :instance/list]))
+                    :x x
+                    :y y
+                    :width 50
+                    :height 50})))
+  (instance-render-text [_ this]
+    (let [{:keys [db/id instance/x instance/y]
+           {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
+      (dom/text #js{:x x :y y :stroke "none" :fill "white" :alignmentBaseline "hanging" :fontSize 20}
+        name)))
   (render [this]
     (let [props (om/props this)
           {:keys [instances/list]
            {:keys [width height]} :ui/screen} props]
+      (js/console.log (.-instance-render-rect this)
+                      (.-instance-render-text this))
       (dom/svg #js{:ref "svg-container"
                    :style (:svg stylesheet)
                    :width "100%"
@@ -176,7 +180,12 @@
                    :onMouseDown #(pointer-events-processor this %)
                    :onMouseMove #(pointer-events-processor this %)
                    :onMouseUp #(pointer-events-processor this %)}
-        (map instance list)))))
+        (map (fn [instance-props]
+               (instance (om/computed
+                           instance-props
+                           {:instance-render-rect (.-instance-render-rect this)
+                            :instance-render-text (.-instance-render-text this)})))
+             list)))))
 
 (def svg-renderer (om/factory SVGRenderer))
 
