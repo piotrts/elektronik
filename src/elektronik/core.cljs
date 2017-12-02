@@ -166,7 +166,8 @@
   (let [new-pointer-state (pointer-event->pointer-state ev)]
     (if (= :select new-pointer-state)
       (let [instance-db-id (pointer-event->instance-db-id ev)]
-        (om/transact! component `[(selection/add-instance {:db/id ~instance-db-id}) :instance/list])))
+        (om/transact! component `[(selection/clear)
+                                  (selection/add-instance {:db/id ~instance-db-id})])))
     (reset! pointer-state new-pointer-state)))
 
 (defui SVGRenderer
@@ -248,6 +249,9 @@
     (if-let [[_ v] (find st k)]
       {:value v}
       {:value :not-found})))
+
+(defmethod mutate 'selection/clear [{:keys [state]} _ _]
+  {:action #(swap! state update :instances/selected empty)})
 
 (defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [db/id]}]
   (let [ident [:instances/by-id id]]
