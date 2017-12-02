@@ -137,7 +137,7 @@
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
 
-(defn ev->instance-db-id [ev]
+(defn pointer-event->instance-db-id [ev]
   (some-> ev
     .-target
     (gdom/getAncestor get-element-data-instance-id true 2)
@@ -165,7 +165,7 @@
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
     (if (= :select new-pointer-state)
-      (let [instance-db-id (ev->instance-db-id ev)]
+      (let [instance-db-id (pointer-event->instance-db-id ev)]
         (om/transact! component `[(selection/add-instance {:db/id ~instance-db-id}) :instance/list])))
     (reset! pointer-state new-pointer-state)))
 
