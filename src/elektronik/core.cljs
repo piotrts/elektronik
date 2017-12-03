@@ -21,7 +21,8 @@
 
 (def app-state
   (let [instance-1-id (om/tempid)
-        instance-2-id (om/tempid)]
+        instance-2-id (om/tempid)
+        instance-3-id (om/tempid)]
     {:ui/screen {:width "100%"
                  :height "100%"}
      :panels/list [{:panel/id :query-inspector
@@ -38,8 +39,15 @@
                       {:db/id instance-2-id
                        :instance/factory subtraction-component-factory
                        :instance/x 110
+                       :instance/y 50}
+                      {:db/id instance-3-id
+                       :instance/factory subtraction-component-factory
+                       :instance/x 210
                        :instance/y 10}]
-     :links/list [[[:instances/by-id instance-1-id] [:instances/by-id instance-2-id]]]}))
+     :links/list [{:from [:instances/by-id instance-1-id]
+                   :to [:instances/by-id instance-2-id]}
+                  {:from [:instances/by-id instance-3-id]
+                   :to [:instances/by-id instance-2-id]}]}))
 
 (def stylesheet
   {:instance #js{:fill "gray"
@@ -86,6 +94,39 @@
       (render-instance this))))
 
 (def instance (om/factory Instance))
+
+(defui Link
+  static om/IQuery
+  (query [this]
+    `[{:from [:instance/x :instance/y]}
+      {:to [:instance/x :instance/y]}])
+  Object
+  (render [this]
+    (let [{{from-x :instance/x
+            from-y :instance/y} :from
+           {to-x :instance/x
+            to-y :instance/y} :to} (om/props this)]
+      (dom/line #js{:x1 from-x
+                    :y1 from-y
+                    :x2 to-x
+                    :y2 to-y
+                    :style #js{:stroke "rgb(0,0,0)"
+                               :strokeWidth 1}}))))
+
+(def link (om/factory Link))
+
+(defui Links
+  static om/IQuery
+  (query [this]
+    (let [link-query (om/get-query Link)]
+      `[~@link-query]))
+  Object
+  (render [this]
+    (let [{:keys [links/list]} (om/props this)]
+      (dom/g nil
+        (mapv link list)))))
+
+(def links (om/factory Links))
 
 (def utf-arrow-collapse \u25B4)
 (def utf-arrow-expand \u25BE)
@@ -190,7 +231,8 @@
           name))))
   (render [this]
     (let [{:keys [instances/list]
-           {:keys [width height]} :ui/screen} (om/props this)]
+           {:keys [width height]} :ui/screen
+           :as props} (om/props this)]
       (dom/svg #js{:ref "svg-container"
                    :style (:svg stylesheet)
                    :width "100%"
@@ -202,7 +244,8 @@
                (instance (om/computed
                            instance-props
                            {:render-instance (.-render-instance this)})))
-             list)))))
+             list)
+        (links props)))))
 
 (def svg-renderer (om/factory SVGRenderer))
 
@@ -211,10 +254,12 @@
   (query [this]
     (let [factory-query (om/get-query Factory)
           instance-query (om/get-query Instance)
+          links-query (om/get-query Links)
           panel-query (om/get-query Panel)]
       `[:ui/screen
         {:factories/list ~factory-query}
         {:instances/list ~instance-query}
+        {:links/list ~links-query}
         {:panels/list ~panel-query}]))
   Object
   ;(on-double-click [this ev])
@@ -248,6 +293,10 @@
     {:value (mapv #(get-in st %) (get st k))}))
 
 (defmethod read :panels/list [{:keys [query state]} k _]
+  (let [st @state]
+    {:value (om/db->tree query (get st k) st)}))
+
+(defmethod read :links/list [{:keys [query state]} k _]
   (let [st @state]
     {:value (om/db->tree query (get st k) st)}))
 
