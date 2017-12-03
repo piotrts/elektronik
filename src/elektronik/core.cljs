@@ -112,8 +112,8 @@
                    :className "panel"}
         (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
           (if expanded?
-            "[-]"
-            "[+]")
+            \u25B4
+            \u25BE)
           " "
           name)
         (when expanded?
