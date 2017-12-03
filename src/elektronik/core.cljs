@@ -186,7 +186,7 @@
                       :fill "white"
                       :alignmentBaseline "hanging"
                       :fontSize 20
-                      :style #js{:pointer-events "none"}}
+                      :style #js{:pointerEvents "none"}}
           name))))
   (render [this]
     (let [{:keys [instances/list]
