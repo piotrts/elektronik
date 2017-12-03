@@ -180,7 +180,13 @@
                       :y y
                       :width 50
                       :height 50})
-        (dom/text #js{:x x :y y :stroke "none" :fill "white" :alignmentBaseline "hanging" :fontSize 20}
+        (dom/text #js{:x x
+                      :y y
+                      :stroke "none"
+                      :fill "white"
+                      :alignmentBaseline "hanging"
+                      :fontSize 20
+                      :style #js{:pointer-events "none"}}
           name))))
   (render [this]
     (let [{:keys [instances/list]
