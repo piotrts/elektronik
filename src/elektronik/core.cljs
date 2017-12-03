@@ -165,8 +165,8 @@
   (let [new-pointer-state (pointer-event->pointer-state ev)]
     (if (= :select new-pointer-state)
       (let [instance-db-id (pointer-event->instance-db-id ev)]
-        (om/transact! component `[(selection/clear)
-                                  (selection/add-instance {:db/id ~instance-db-id})])))
+        (om/transact! component (cond-> '[(selection/clear)]
+                                  instance-db-id (conj `(selection/add-instance {:db/id ~instance-db-id}))))))
     (reset! pointer-state new-pointer-state)))
 
 (defui SVGRenderer
