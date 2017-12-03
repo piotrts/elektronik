@@ -90,6 +90,9 @@
 
 (def instance (om/factory Instance))
 
+(def utf-arrow-collapse \u25B4)
+(def utf-arrow-expand \u25BE)
+
 (defui Panel
   static om/Ident
   (ident [this props]
@@ -112,8 +115,8 @@
                    :className "panel"}
         (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
           (if expanded?
-            \u25B4
-            \u25BE)
+            utf-arrow-collapse
+            utf-arrow-expand)
           " "
           name)
         (when expanded?
