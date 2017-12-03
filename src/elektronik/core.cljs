@@ -286,7 +286,7 @@
 
 (defmethod read :instances/list [{:keys [query state]} k _]
   (let [st @state]
-    {:value (om/db->tree query (get st k) st)}))
+    {:value (mapv #(get-in st %) (get st k))}))
 
 (defmethod read :selection/list [{:keys [query state]} k _]
   (let [st @state]
