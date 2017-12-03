@@ -15,7 +15,6 @@ button {
   background-color: #fff;
   border: 1px solid black;
   border-radius: 2px;
-  margin-top: 5px;
 }
 
 #app {
@@ -36,5 +35,7 @@ div#panels {
   width: 400px;}
 
 div #panels .panel {
-  border-top: 1px solid gray;
+  border: 1px solid gray;
+  border: 1px solid gray;
+  padding: 3px;
 }
