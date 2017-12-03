@@ -132,7 +132,7 @@
 
 (def pointer-state (atom :none))
 
-(reader/register-tag-parser! 'om/id #(first %))
+(reader/register-tag-parser! 'om/id #(-> % first uuid om/tempid))
 
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
@@ -142,8 +142,7 @@
     .-target
     (gdom/getAncestor get-element-data-instance-id true 2)
     get-element-data-instance-id
-    reader/read-string
-    om/tempid))
+    reader/read-string))
 
 (defn pointer-event->pointer-state [ev]
   (let [state @pointer-state
@@ -239,6 +238,10 @@
 (defmethod read :instances/list [{:keys [query state]} k _]
   (let [st @state]
     {:value (om/db->tree query (get st k) st)}))
+
+(defmethod read :instances/selected [{:keys [query state]} k _]
+  (let [st @state]
+    {:value (mapv #(get-in st %) (get st k))}))
 
 (defmethod read :panels/list [{:keys [query state]} k _]
   (let [st @state]
