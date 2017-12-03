@@ -25,9 +25,8 @@ div#panels {
   position: absolute;
   top: 0;
   right: 0;
-  font-size: 80%;
-  width: 400px;
-}
+  font-size: 60%;
+  width: 400px;}
 
 div #panels .panel {
   border-top: 1px solid gray;
