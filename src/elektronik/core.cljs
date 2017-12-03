@@ -260,6 +260,9 @@
   (let [ident [:instances/by-id id]]
     {:action #(swap! state update :instances/selected conj ident)}))
 
+;(defmethod mutate 'selection/drag [{:keys [state parser]} _ {:keys [x y]}]
+;  (println (parser {:state state} '[{:instances/selected [:db/id]}])))
+
 (defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/type instance/x instance/y]}]
   (let [x (or x (rand-int 500))
         y (or y (rand-int 500))
