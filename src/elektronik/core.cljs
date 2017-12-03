@@ -30,7 +30,7 @@
                    {:panel/id :state-inspector
                     :panel/name "State Inspector"
                     :panel/expanded? true}]
-     :instances/selected []
+     :selection/list []
      :instances/list [{:db/id instance-1-id
                        :instance/factory addition-component-factory
                        :instance/x 10
@@ -243,7 +243,7 @@
   (let [st @state]
     {:value (om/db->tree query (get st k) st)}))
 
-(defmethod read :instances/selected [{:keys [query state]} k _]
+(defmethod read :selection/list [{:keys [query state]} k _]
   (let [st @state]
     {:value (mapv #(get-in st %) (get st k))}))
 
@@ -258,14 +258,14 @@
       {:value :not-found})))
 
 (defmethod mutate 'selection/clear [{:keys [state]} _ _]
-  {:action #(swap! state update :instances/selected empty)})
+  {:action #(swap! state update :selection/list empty)})
 
 (defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [db/id]}]
   (let [ident [:instances/by-id id]]
-    {:action #(swap! state update :instances/selected conj ident)}))
+    {:action #(swap! state update :selection/list conj ident)}))
 
 ;(defmethod mutate 'selection/drag [{:keys [state parser]} _ {:keys [x y]}]
-;  (println (parser {:state state} '[{:instances/selected [:db/id]}])))
+;  (println (parser {:state state} '[{:selection/list[:db/id]}])))
 
 (defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/type instance/x instance/y]}]
   (let [x (or x (rand-int 500))
