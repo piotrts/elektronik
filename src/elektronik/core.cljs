@@ -77,7 +77,7 @@
     (let [{:keys [db/id]} props]
       [:instances/by-id id]))
   static om/IQuery
-  (query [query]
+  (query [this]
     (let [factory-query (om/get-query Factory)]
       `[:db/id :instance/x :instance/y {:instance/factory ~factory-query}]))
   Object
