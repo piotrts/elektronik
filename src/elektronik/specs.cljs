@@ -24,6 +24,7 @@
 ;; factory
 ;; ----------------------------------------------------------------------------
 (s/def :factory/type keyword?)
+(s/def :factory/fn keyword?)
 (s/def :factory/name string?)
 (s/def :factory/desc string?)
 

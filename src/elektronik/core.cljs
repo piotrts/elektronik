@@ -12,11 +12,13 @@
 
 (def addition-component-factory
   #:factory{:type :math/addition
+            :fn :+
             :name "+"
             :desc "Addition"})
 
 (def subtraction-component-factory
   #:factory{:type :math/subtraction
+            :fn :-
             :name "-"
             :desc "Subtraction"})
 
