@@ -328,13 +328,15 @@
                                 :factory factory-ident
                                 :x x
                                 :y y}]
-    {:action (fn []
+    {:value {:keys [:instances/list]}
+     :action (fn []
                (swap! state assoc-in instance-ident new-instance)
                (swap! state update :instances/list conj instance-ident))}))
 
 (defmethod mutate 'panel/toggle [{:keys [state]} _ {:keys [panel/id]}]
   (let [ident [:panels/by-id id]]
-    {:action #(swap! state update-in (conj ident :panel/expanded?) not)}))
+    {:value {:keys [:panels/list]}
+     :action #(swap! state update-in (conj ident :panel/expanded?) not)}))
 
 ;(defn transpile-static [state])
 ;  (let [resolve-instance (fn [ident])]))
