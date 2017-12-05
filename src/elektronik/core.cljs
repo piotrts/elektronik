@@ -341,6 +341,7 @@
     {:value {:keys [:panels/list]}
      :action #(swap! state update-in (conj ident :panel/expanded?) not)}))
 
+;; work in progress, quick and dirty
 (defn transpile-static [state]
   (let [resolve-instance (fn [{:keys [from to]}]
                            {:from (get-in state from)
@@ -353,11 +354,21 @@
         collect-froms (fn [links]
                         (into {}
                           (map :from links)))
-        collapsible (clojure.set/difference
-                      (collect-instances links)
-                      (collect-froms links))]
-    (map resolve-instance links)
-    collapsible))
+        collapsible (into #{}
+                      (map second
+                        (clojure.set/difference
+                          (collect-instances links)
+                          (collect-froms links))))
+        collapsed (into #{}
+                    (map (fn [{:keys [from to] :as link}]
+                           (if-let [ident (some #{(second to)} collapsible)]
+                             {:expr (as-> state $
+                                      (get-in $ [:instances/by-id ident :instance/factory])
+                                      (get-in state (conj $ :factory/fn)))
+                              :from from}
+                             link))
+                         links))]
+    collapsed))
 
 ;(transpile-static @(om/app-state reconciler))
 
