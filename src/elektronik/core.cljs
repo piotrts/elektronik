@@ -173,7 +173,6 @@
 
 (def panels (om/factory Panels {:validator #(spec/valid? ::specs/panels (:panels/list %))})) ; temporary
 
-
 (def pointer-state (atom :none))
 
 (reader/register-tag-parser! 'om/id #(-> % first uuid om/tempid))
