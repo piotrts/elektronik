@@ -1,6 +1,7 @@
 (ns elektronik.core
   (:require [elektronik.query-inspector :as query-inspector]
             [elektronik.state-inspector :as state-inspector]
+            [elektronik.specs :as specs]
             [cljs.spec.alpha :as spec]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
@@ -94,23 +95,7 @@
     (let [{:keys [render-instance]} (om/get-computed this)]
       (render-instance this))))
 
-(spec/def :factory/type keyword?)
-(spec/def :factory/name string?)
-(spec/def :factory/desc string?)
-
-(spec/def ::factory
-  (spec/keys :req [:factory/type :factory/name]
-             :opt [:factory/desc]))
-
-(spec/def :db/id om/tempid?)
-(spec/def :instance/factory ::factory)
-(spec/def :instance/x integer?)
-(spec/def :instance/y integer?)
-
-(spec/def ::instance
-  (spec/keys :req [:db/id :instance/factory :instance/x :instance/y]))
-
-(def instance (om/factory Instance {:validator #(spec/valid? ::instance %)}))
+(def instance (om/factory Instance {:validator #(spec/valid? ::specs/instance %)}))
 
 (defui Link
   static om/IQuery
