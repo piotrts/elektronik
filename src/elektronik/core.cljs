@@ -2,7 +2,6 @@
   (:require [elektronik.query-inspector :as query-inspector]
             [elektronik.state-inspector :as state-inspector]
             [elektronik.specs :as specs]
-            [cljs.spec.alpha :as spec]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
