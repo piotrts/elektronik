@@ -162,7 +162,7 @@
         (when expanded?
           (panel-subfactory panel-props))))))
 
-(def panel (om/factory Panel))
+(def panel (om/factory Panel {:validator #(spec/valid? ::specs/panel %)}))
 
 (defui Panels
   Object
@@ -171,7 +171,8 @@
       (dom/div #js{:id "panels"}
         (map panel list)))))
 
-(def panels (om/factory Panels))
+(def panels (om/factory Panels {:validator #(spec/valid? ::specs/panels (:panels/list %))})) ; temporary
+
 
 (def pointer-state (atom :none))
 

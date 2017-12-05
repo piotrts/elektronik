@@ -2,6 +2,17 @@
   (:require [cljs.spec.alpha :as s]
             [om.next :as om]))
 
+(s/def :panel/id keyword?)
+(s/def :panel/name string?)
+(s/def :panel/expanded? boolean?)
+
+(s/def ::panel
+  (s/keys :req [:panel/id :panel/name]
+          :opt [:panel/expanded?]))
+
+(s/def ::panels
+  (s/coll-of ::panel :kind vector?))
+
 (s/def :factory/type keyword?)
 (s/def :factory/name string?)
 (s/def :factory/desc string?)
