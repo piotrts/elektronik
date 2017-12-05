@@ -94,8 +94,16 @@
     (let [{:keys [render-instance]} (om/get-computed this)]
       (render-instance this))))
 
+(spec/def :factory/type keyword?)
+(spec/def :factory/name string?)
+(spec/def :factory/desc string?)
+
+(spec/def ::factory
+  (spec/keys :req [:factory/type :factory/name]
+             :opt [:factory/desc]))
+
 (spec/def :db/id om/tempid?)
-(spec/def :instance/factory any?) ;; temporary
+(spec/def :instance/factory ::factory)
 (spec/def :instance/x integer?)
 (spec/def :instance/y integer?)
 
