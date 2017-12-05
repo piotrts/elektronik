@@ -339,12 +339,23 @@
     {:value {:keys [:panels/list]}
      :action #(swap! state update-in (conj ident :panel/expanded?) not)}))
 
-;(defn transpile-static [state])
-;  (let [resolve-instance (fn [{:keys [from to]}])]))
-;                           {:from (get-in state from)})]))
-;                            :to (get-in state to)})]))
-;        {:keys [links/list]} state]))
-;    (map resolve-instance list)))
+(defn transpile-static [state]
+  (let [resolve-instance (fn [{:keys [from to]}]
+                           {:from (get-in state from)
+                            :to (get-in state to)})
+        {:keys [links/list]} state
+        collect-instances (fn [links-list]
+                            (into #{}
+                              (apply concat
+                                (map (juxt :from :to) links-list))))
+        collect-froms (fn [links-list]
+                        (into {}
+                          (map :from links-list)))
+        collapsible (clojure.set/difference
+                      (collect-instances list)
+                      (collect-froms list))]
+    (map resolve-instance list)
+    collapsible))
 
 ;(transpile-static @(om/app-state reconciler))
 
