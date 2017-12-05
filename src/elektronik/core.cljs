@@ -340,10 +340,13 @@
      :action #(swap! state update-in (conj ident :panel/expanded?) not)}))
 
 ;(defn transpile-static [state])
-;  (let [resolve-instance (fn [ident])]))
-;                           (get-in state ident))]))
+;  (let [resolve-instance (fn [{:keys [from to]}])]))
+;                           {:from (get-in state from)})]))
+;                            :to (get-in state to)})]))
 ;        {:keys [links/list]} state]))
-;    (resolve-instance (ffirst list))))
+;    (map resolve-instance list)))
+
+;(transpile-static @(om/app-state reconciler))
 
 (def panel-id->component
   {:query-inspector query-inspector/QueryInspector
