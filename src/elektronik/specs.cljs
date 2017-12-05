@@ -2,6 +2,8 @@
   (:require [cljs.spec.alpha :as s]
             [om.next :as om]))
 
+(def default-validator s/valid?)
+
 ;; panel
 ;; ----------------------------------------------------------------------------
 (s/def :panel/id keyword?)

@@ -95,7 +95,7 @@
     (let [{:keys [render-instance]} (om/get-computed this)]
       (render-instance this))))
 
-(def instance (om/factory Instance {:validator #(spec/valid? ::specs/instance %)}))
+(def instance (om/factory Instance {:validator #(specs/default-validator ::specs/instance %)}))
 
 (defui Link
   static om/IQuery
@@ -162,7 +162,7 @@
         (when expanded?
           (panel-subfactory panel-props))))))
 
-(def panel (om/factory Panel {:validator #(spec/valid? ::specs/panel %)}))
+(def panel (om/factory Panel {:validator #(specs/default-validator ::specs/panel %)}))
 
 (defui Panels
   Object
@@ -171,7 +171,7 @@
       (dom/div #js{:id "panels"}
         (map panel list)))))
 
-(def panels (om/factory Panels {:validator #(spec/valid? ::specs/panels (:panels/list %))})) ; temporary
+(def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels (:panels/list %))})) ; temporary
 
 (def pointer-state (atom :none))
 
