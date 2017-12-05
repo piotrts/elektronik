@@ -343,18 +343,18 @@
   (let [resolve-instance (fn [{:keys [from to]}]
                            {:from (get-in state from)
                             :to (get-in state to)})
-        {:keys [links/list]} state
-        collect-instances (fn [links-list]
+        {links :links/list} state
+        collect-instances (fn [links]
                             (into #{}
                               (apply concat
-                                (map (juxt :from :to) links-list))))
-        collect-froms (fn [links-list]
+                                (map (juxt :from :to) links))))
+        collect-froms (fn [links]
                         (into {}
-                          (map :from links-list)))
+                          (map :from links)))
         collapsible (clojure.set/difference
-                      (collect-instances list)
-                      (collect-froms list))]
-    (map resolve-instance list)
+                      (collect-instances links)
+                      (collect-froms links))]
+    (map resolve-instance links)
     collapsible))
 
 ;(transpile-static @(om/app-state reconciler))
