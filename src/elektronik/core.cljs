@@ -307,11 +307,13 @@
       {:value :not-found})))
 
 (defmethod mutate 'selection/clear [{:keys [state]} _ _]
-  {:action #(swap! state update :selection/list empty)})
+  {:value {:keys [:selection/list]}
+   :action #(swap! state update :selection/list empty)})
 
 (defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [db/id]}]
   (let [ident [:instances/by-id id]]
-    {:action #(swap! state update :selection/list conj ident)}))
+    {:value {:keys [:selection/list]}
+     :action #(swap! state update :selection/list conj ident)}))
 
 ;(defmethod mutate 'selection/drag [{:keys [state parser]} _ {:keys [x y]}]
 ;  (println (parser {:state state} '[{:selection/list[:db/id]}])))
