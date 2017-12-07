@@ -19,14 +19,14 @@
     (dom/button #js{:key (str "toolbar-factory-" name)
                     :onClick (fn [_]
                                (om/transact! x `[(instance/create {:instance/type ~type})]))}
-                name)))
+      name)))
 
 (defui Toolbar
   Object
   (render [this]
     (let [{:keys [factories/list]} (om/props this)]
       (dom/div nil
-               (map #(toolbar-button this %) list)))))
+        (map #(toolbar-button this %) list)))))
 
 (def toolbar (om/factory Toolbar))
 
@@ -84,7 +84,7 @@
   (render [this]
     (let [{:keys [links/list]} (om/props this)]
       (dom/g nil
-             (mapv link list)))))
+        (mapv link list)))))
 
 (def links (om/factory Links))
 
@@ -111,14 +111,14 @@
           panel-subfactory ((om/shared this :panel-id->factory) id)]
       (dom/div #js{:id id
                    :className "panel"}
-               (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
-                           (if expanded?
-                             utf-arrow-collapse
-                             utf-arrow-expand)
-                           " "
-                           name)
-               (when expanded?
-                 (panel-subfactory panel-props))))))
+        (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
+          (if expanded?
+            utf-arrow-collapse
+            utf-arrow-expand)
+          " "
+          name)
+        (when expanded?
+          (panel-subfactory panel-props))))))
 
 (def panel (om/factory Panel {:validator #(specs/default-validator ::specs/panel %)}))
 
@@ -127,7 +127,7 @@
   (render [this]
     (let [{:keys [panels/list]} (om/props this)]
       (dom/div #js{:id "panels"}
-               (map panel list)))))
+        (map panel list)))))
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels (:panels/list %))})) ; temporary
 
@@ -140,10 +140,10 @@
 
 (defn pointer-event->instance-db-id [ev]
   (some-> ev
-          .-target
-          (gdom/getAncestor get-element-data-instance-id true 2)
-          get-element-data-instance-id
-          reader/read-string))
+    .-target
+    (gdom/getAncestor get-element-data-instance-id true 2)
+    get-element-data-instance-id
+    reader/read-string))
 
 (defn pointer-event->pointer-state [ev]
   (let [state @pointer-state
@@ -167,7 +167,7 @@
     (if (= :select new-pointer-state)
       (let [instance-db-id (pointer-event->instance-db-id ev)]
         (om/transact! component (cond-> '[(selection/clear)]
-                                        instance-db-id (conj `(selection/add-instance {:db/id ~instance-db-id}))))))
+                                  instance-db-id (conj `(selection/add-instance {:db/id ~instance-db-id}))))))
     (reset! pointer-state new-pointer-state)))
 
 (defui SVGRenderer
@@ -176,19 +176,19 @@
     (let [{:keys [db/id instance/x instance/y]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
       (dom/g #js{:data-instance-id (str id)}
-             (dom/rect #js{:style (:instance stylesheet)
-                           :x x
-                           :y y
-                           :width 50
-                           :height 50})
-             (dom/text #js{:x x
-                           :y y
-                           :stroke "none"
-                           :fill "white"
-                           :alignmentBaseline "hanging"
-                           :fontSize 20
-                           :style #js{:pointerEvents "none"}}
-                       name))))
+        (dom/rect #js{:style (:instance stylesheet)
+                      :x x
+                      :y y
+                      :width 50
+                      :height 50})
+        (dom/text #js{:x x
+                      :y y
+                      :stroke "none"
+                      :fill "white"
+                      :alignmentBaseline "hanging"
+                      :fontSize 20
+                      :style #js{:pointerEvents "none"}}
+          name))))
   (render [this]
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen
@@ -200,12 +200,12 @@
                    :onMouseDown #(pointer-events-processor this %)
                    :onMouseMove #(pointer-events-processor this %)
                    :onMouseUp #(pointer-events-processor this %)}
-               (map (fn [instance-props]
-                      (instance (om/computed
-                                  instance-props
-                                  {:render-instance (.-render-instance this)})))
-                    list)
-               (links props)))))
+        (map (fn [instance-props]
+               (instance (om/computed
+                           instance-props
+                           {:render-instance (.-render-instance this)})))
+             list)
+        (links props)))))
 
 (def svg-renderer (om/factory SVGRenderer))
 
@@ -233,9 +233,9 @@
   (render [this]
     (let [props (om/props this)]
       (dom/div #js{:id "elektronik"}
-               (toolbar props)
-               (panels props)
-               (svg-renderer props)))))
+        (toolbar props)
+        (panels props)
+        (svg-renderer props)))))
 
 (def panel-id->component
   {:query-inspector query-inspector/QueryInspector
