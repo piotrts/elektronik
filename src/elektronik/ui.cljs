@@ -1,5 +1,7 @@
 (ns elektronik.ui
-  (:require [elektronik.specs :as specs]
+  (:require [elektronik.query-inspector :as query-inspector]
+            [elektronik.state-inspector :as state-inspector]
+            [elektronik.specs :as specs]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
@@ -233,3 +235,15 @@
                (toolbar props)
                (panels props)
                (svg-renderer props)))))
+
+(def panel-id->component
+  {:query-inspector query-inspector/QueryInspector
+   :state-inspector state-inspector/StateInspector})
+
+(def panel-id->factory
+  {:query-inspector query-inspector/query-inspector
+   :state-inspector state-inspector/state-inspector})
+
+(def shared
+  {:panel-id->component panel-id->component
+   :panel-id->factory panel-id->factory})

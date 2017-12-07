@@ -1,7 +1,5 @@
 (ns elektronik.core
-  (:require [elektronik.query-inspector :as query-inspector]
-            [elektronik.state-inspector :as state-inspector]
-            [elektronik.ui :as ui]
+  (:require [elektronik.ui :as ui]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
@@ -112,14 +110,6 @@
     {:value {:keys [:panels/list]}
      :action #(swap! state update-in (conj ident :panel/expanded?) not)}))
 
-(def panel-id->component
-  {:query-inspector query-inspector/QueryInspector
-   :state-inspector state-inspector/StateInspector})
-
-(def panel-id->factory
-  {:query-inspector query-inspector/query-inspector
-   :state-inspector state-inspector/state-inspector})
-
 (def parser
   (om/parser
     {:read read
@@ -130,8 +120,7 @@
     {:state app-state
      :parser parser
      :normalize true
-     :shared {:panel-id->component panel-id->component
-              :panel-id->factory panel-id->factory}
+     :shared ui/shared
      :id-key :db/id}))
 
 (om/add-root! reconciler ui/Root (gdom/getElement "app"))
