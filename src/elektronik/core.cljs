@@ -30,6 +30,9 @@
                     :panel/expanded? true}
                    {:panel/id :state-inspector
                     :panel/name "State Inspector"
+                    :panel/expanded? true}
+                   {:panel/id :instance-inspector
+                    :panel/name "Instance Inspector"
                     :panel/expanded? true}]
      :selection/list []
      :instances/list [{:db/id instance-1-id
@@ -72,7 +75,8 @@
   (let [st @state]
     {:value (om/db->tree query (get st k) st)}))
 
-(defmethod read :default [{:keys [state]} k params]
+(defmethod read :default [{:keys [state] :as e} k params]
+  (js/console.log e)
   (let [st @state]
     (if-let [[_ v] (find st k)]
       {:value v}

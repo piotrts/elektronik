@@ -1,6 +1,7 @@
 (ns elektronik.ui
   (:require [elektronik.query-inspector :as query-inspector]
             [elektronik.state-inspector :as state-inspector]
+            [elektronik.instance-inspector :as instance-inspector]
             [elektronik.specs :as specs]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
@@ -238,11 +239,13 @@
 
 (def panel-id->component
   {:query-inspector query-inspector/QueryInspector
-   :state-inspector state-inspector/StateInspector})
+   :state-inspector state-inspector/StateInspector
+   :instance-inspector instance-inspector/InstanceInspector})
 
 (def panel-id->factory
   {:query-inspector query-inspector/query-inspector
-   :state-inspector state-inspector/state-inspector})
+   :state-inspector state-inspector/state-inspector
+   :instance-inspector instance-inspector/instance-inspector})
 
 (def shared
   {:panel-id->component panel-id->component
