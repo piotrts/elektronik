@@ -5,11 +5,13 @@
 (defui InstanceInspector
   static om/IQuery
   (query [this]
-    [{:selection/list [:db/id]}])
+    [{:selection/list '[*]}])
   Object
   (render [this]
-    (let [panel-data (get (om/props this) :panel/data)]
+    (let [selected (get-in (om/props this) [:panel/data :selection/list 0])]
       (dom/div #js{:id "instance-inspector"}
-        "Selected:" (str panel-data)))))
+        (if selected
+          (str selected)
+          "Nothing is selected")))))
 
 (def instance-inspector (om/factory InstanceInspector))
