@@ -11,7 +11,11 @@
     (let [selected (get-in (om/props this) [:panel/data :selection/list 0])]
       (dom/div #js{:id "instance-inspector"}
         (if selected
-          (str selected)
+          (map (fn [[param value]]
+                 (dom/div #js{:key (str "instance-inspector-" (namespace param) "-" (name param))}
+                   (dom/strong nil (str param) ":")
+                   (str value)))
+               selected)
           "Nothing is selected")))))
 
 (def instance-inspector (om/factory InstanceInspector))
