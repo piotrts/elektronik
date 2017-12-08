@@ -14,7 +14,7 @@
    {:rect #js{:fill "gray"
               :strokeWidth 1
               :stroke "black"}
-    :text #js{:style #js{:pointerEvents "none"}}}})
+    :text #js{:pointerEvents "none"}}})
 
 (defn toolbar-button [x factory]
   (let [{:keys [factory/name factory/type]} factory]
