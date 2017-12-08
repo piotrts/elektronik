@@ -7,6 +7,8 @@
 
 (enable-console-print!)
 
+(reader/register-tag-parser! 'om/id #(-> % first uuid om/tempid))
+
 (def addition-component-factory
   #:factory{:type :math/addition
             :fn :+

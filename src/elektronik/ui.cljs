@@ -133,8 +133,6 @@
 
 (def pointer-state (atom :none))
 
-(reader/register-tag-parser! 'om/id #(-> % first uuid om/tempid))
-
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
 
