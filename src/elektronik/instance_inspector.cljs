@@ -3,9 +3,13 @@
             [om.dom :as dom]))
 
 (defui InstanceInspector
+  static om/IQuery
+  (query [this]
+    [{:selection/list [:db/id]}])
   Object
   (render [this]
-    (dom/div #js{:id "instance-inspector"}
-      "stub")))
+    (let [panel-data (get (om/props this) :panel/data)]
+      (dom/div #js{:id "instance-inspector"}
+        "Selected:" (str panel-data)))))
 
 (def instance-inspector (om/factory InstanceInspector))

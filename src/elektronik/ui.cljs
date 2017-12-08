@@ -100,12 +100,6 @@
   (query [this]
     [:panel/id :panel/name :panel/expanded?])
   Object
-  (componentWillUpdate [this next-props _]
-    (let [{:keys [panel/id]} next-props
-          panel-subcomponent ((om/shared this :panel-id->component) id)
-          panel-subquery (om/get-query panel-subcomponent)]
-      (when (seq panel-subquery)
-        (om/update-query! this update :query conj panel-subquery))))
   (render [this]
     (let [{:keys [panel/id panel/expanded? panel/name] :as panel-props} (om/props this)
           panel-subfactory ((om/shared this :panel-id->factory) id)]
@@ -125,9 +119,13 @@
 (defui Panels
   Object
   (render [this]
-    (let [{:keys [panels/list]} (om/props this)]
+    (let [{:keys [panels/list panels/data]} (om/props this)]
       (dom/div #js{:id "panels"}
-        (map panel list)))))
+        (map (fn [panel-props]
+               (let [{:keys [panel/id]} panel-props
+                     panel-data (get data id)]
+                 (panel (assoc panel-props :panel/data panel-data))))
+             list)))))
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels (:panels/list %))})) ; temporary
 
@@ -207,6 +205,20 @@
 
 (def svg-renderer (om/factory SVGRenderer))
 
+(def panel-id->component
+  {:query-inspector query-inspector/QueryInspector
+   :state-inspector state-inspector/StateInspector
+   :instance-inspector instance-inspector/InstanceInspector})
+
+(def panel-id->factory
+  {:query-inspector query-inspector/query-inspector
+   :state-inspector state-inspector/state-inspector
+   :instance-inspector instance-inspector/instance-inspector})
+
+(def shared
+  {:panel-id->component panel-id->component
+   :panel-id->factory panel-id->factory})
+
 (defui Root
   static om/IQuery
   (query [this]
@@ -214,11 +226,15 @@
           instance-query (om/get-query Instance)
           links-query (om/get-query Links)
           panel-query (om/get-query Panel)]
-      `[:ui/screen
-        {:factories/list ~factory-query}
-        {:instances/list ~instance-query}
-        {:links/list ~links-query}
-        {:panels/list ~panel-query}]))
+      [:ui/screen
+       {:factories/list factory-query}
+       {:instances/list instance-query}
+       {:links/list links-query}
+       {:panels/list panel-query}
+       {:panels/data (into {}
+                       (map (fn [[panel-id panel-component]]
+                              [panel-id (or (om/get-query panel-component) {})])
+                            panel-id->component))}]))
   Object
   ;(on-double-click [this ev])
   ;  (let [svg-node (om/react-ref this "svg-container")]))
@@ -234,17 +250,3 @@
         (toolbar props)
         (panels props)
         (svg-renderer props)))))
-
-(def panel-id->component
-  {:query-inspector query-inspector/QueryInspector
-   :state-inspector state-inspector/StateInspector
-   :instance-inspector instance-inspector/InstanceInspector})
-
-(def panel-id->factory
-  {:query-inspector query-inspector/query-inspector
-   :state-inspector state-inspector/state-inspector
-   :instance-inspector instance-inspector/instance-inspector})
-
-(def shared
-  {:panel-id->component panel-id->component
-   :panel-id->factory panel-id->factory})
