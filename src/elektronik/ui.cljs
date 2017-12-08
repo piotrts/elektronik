@@ -10,9 +10,11 @@
             [goog.style :as gstyle]))
 
 (def stylesheet
-  {:instance #js{:fill "gray"
-                 :strokeWidth 1
-                 :stroke "black"}})
+  {:instance
+   {:rect #js{:fill "gray"
+              :strokeWidth 1
+              :stroke "black"}
+    :text #js{:style #js{:pointerEvents "none"}}}})
 
 (defn toolbar-button [x factory]
   (let [{:keys [factory/name factory/type]} factory]
@@ -172,18 +174,18 @@
     (let [{:keys [db/id instance/x instance/y]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
       (dom/g #js{:data-instance-id (str id)}
-        (dom/rect #js{:style (:instance stylesheet)
+        (dom/rect #js{:style (get-in stylesheet [:instance :rect])
                       :x x
                       :y y
                       :width 50
                       :height 50})
-        (dom/text #js{:x x
+        (dom/text #js{:style (get-in stylesheet [:instance :text])
+                      :x x
                       :y y
                       :stroke "none"
                       :fill "white"
                       :alignmentBaseline "hanging"
-                      :fontSize 20
-                      :style #js{:pointerEvents "none"}}
+                      :fontSize 20}
           name))))
   (render [this]
     (let [{:keys [instances/list]
