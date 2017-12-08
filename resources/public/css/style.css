@@ -19,6 +19,11 @@ button {
   font-size: 10px;
 }
 
+button:hover {
+  box-shadow: 1px 1px;
+  background-color: #fff;
+}
+
 #app {
   width: 100%;
   height: 100%;
