@@ -13,8 +13,10 @@
         (if selected
           (map (fn [[param value]]
                  (dom/div #js{:key (str "instance-inspector-" (namespace param) "-" (name param))}
-                   (dom/strong nil (str param) ":")
-                   (str value)))
+                   (dom/strong nil
+                     (str param) ":")
+                   (dom/input #js{:type "text"
+                                  :value value})))
                selected)
           "Nothing is selected")))))
 
