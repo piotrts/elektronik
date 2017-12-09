@@ -25,28 +25,28 @@
         instance-3-id (om/tempid)]
     {:ui/screen {:width "100%"
                  :height "100%"}
-     :panels/list [{:panel/id :query-inspector
-                    :panel/name "Query Inspector"
-                    :panel/expanded? true}
-                   {:panel/id :state-inspector
-                    :panel/name "State Inspector"
-                    :panel/expanded? true}
-                   {:panel/id :instance-inspector
-                    :panel/name "Instance Inspector"
-                    :panel/expanded? true}]
+     :panels/list [#:panel{:id :query-inspector
+                           :name "Query Inspector"
+                           :expanded? true}
+                   #:panel{:id :state-inspector
+                           :name "State Inspector"
+                           :expanded? true}
+                   #:panel{:id :instance-inspector
+                           :name "Instance Inspector"
+                           :expanded? true}]
      :selection/list []
-     :instances/list [{:instance/id instance-1-id
-                       :instance/factory addition-component-factory
-                       :instance/x 10
-                       :instance/y 10}
-                      {:instance/id instance-2-id
-                       :instance/factory subtraction-component-factory
-                       :instance/x 110
-                       :instance/y 50}
-                      {:instance/id instance-3-id
-                       :instance/factory subtraction-component-factory
-                       :instance/x 210
-                       :instance/y 10}]
+     :instances/list [#:instance{:id instance-1-id
+                                 :factory addition-component-factory
+                                 :x 10
+                                 :y 10}
+                      #:instance{:id instance-2-id
+                                 :factory subtraction-component-factory
+                                 :x 110
+                                 :y 50}
+                      #:instance{:id instance-3-id
+                                 :factory subtraction-component-factory
+                                 :x 210
+                                 :y 10}]
      :links/list [{:from [:instances/by-id instance-1-id]
                    :to [:instances/by-id instance-2-id]}
                   {:from [:instances/by-id instance-3-id]
