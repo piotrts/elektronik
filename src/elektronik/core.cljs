@@ -10,13 +10,13 @@
 (reader/register-tag-parser! 'om/id #(-> % first uuid om/tempid))
 
 (def addition-component-factory
-  #:factory{:type :math/addition
+  #:factory{:id :math/addition
             :fn :+
             :name "+"
             :desc "Addition"})
 
 (def subtraction-component-factory
-  #:factory{:type :math/subtraction
+  #:factory{:id :math/subtraction
             :fn :-
             :name "-"
             :desc "Subtraction"})
@@ -60,7 +60,7 @@
 
 (defmethod read :factories/list [{:keys [query state]} k _]
   (let [st @state]
-    {:value (vals (get st :factories/by-type))}))
+    {:value (vals (get st :factories/by-id))}))
 
 (defmethod read :default [{:keys [query ast state]} k params]
   (let [st @state]
@@ -86,7 +86,7 @@
         y (or y (rand-int 500))
         tempid (om/tempid)
         instance-ident [:instances/by-id tempid]
-        factory-ident [:factories/by-type type]
+        factory-ident [:factories/by-id type]
         new-instance #:instance{:db/id tempid
                                 :factory factory-ident
                                 :x x

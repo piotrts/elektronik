@@ -23,13 +23,13 @@
 
 ;; factory
 ;; ----------------------------------------------------------------------------
-(s/def :factory/type keyword?)
+(s/def :factory/id keyword?)
 (s/def :factory/fn keyword?)
 (s/def :factory/name string?)
 (s/def :factory/desc string?)
 
 (s/def ::factory
-  (s/keys :req [:factory/type :factory/name]
+  (s/keys :req [:factory/id :factory/name]
           :opt [:factory/desc]))
 
 

@@ -22,7 +22,6 @@
    :instance-inspector instance-inspector/InstanceInspector})
 
 (def panel-id->factory
-
   {:query-inspector query-inspector/query-inspector
    :state-inspector state-inspector/state-inspector
    :instance-inspector instance-inspector/instance-inspector})
@@ -32,10 +31,10 @@
    :panel-id->factory panel-id->factory})
 
 (defn toolbar-button [x factory]
-  (let [{:keys [factory/name factory/type]} factory]
+  (let [{:keys [factory/name factory/id]} factory]
     (dom/button #js{:key (str "toolbar-factory-" name)
                     :onClick (fn [_]
-                               (om/transact! x `[(instance/create {:instance/type ~type})]))}
+                               (om/transact! x `[(instance/create {:instance/type ~id})]))}
       name)))
 
 (defui Toolbar
@@ -50,11 +49,11 @@
 (defui Factory
   static om/Ident
   (ident [this props]
-    (let [{:keys [factory/type]} props]
-      [:factories/by-type type]))
+    (let [{:keys [factory/id]} props]
+      [:factories/by-id id]))
   static om/IQuery
   (query [this]
-    [:factory/type :factory/name :factory/desc]))
+    [:factory/id :factory/name :factory/desc]))
 
 (defui Instance
   static om/Ident
