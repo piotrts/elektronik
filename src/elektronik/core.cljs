@@ -35,15 +35,15 @@
                     :panel/name "Instance Inspector"
                     :panel/expanded? true}]
      :selection/list []
-     :instances/list [{:db/id instance-1-id
+     :instances/list [{:instance/id instance-1-id
                        :instance/factory addition-component-factory
                        :instance/x 10
                        :instance/y 10}
-                      {:db/id instance-2-id
+                      {:instance/id instance-2-id
                        :instance/factory subtraction-component-factory
                        :instance/x 110
                        :instance/y 50}
-                      {:db/id instance-3-id
+                      {:instance/id instance-3-id
                        :instance/factory subtraction-component-factory
                        :instance/x 210
                        :instance/y 10}]
@@ -71,7 +71,7 @@
   {:value {:keys [:selection/list]}
    :action #(swap! state update :selection/list empty)})
 
-(defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [db/id]}]
+(defmethod mutate 'selection/add-instance [{:keys [state]} _ {:keys [instance/id]}]
   (let [ident [:instances/by-id id]]
     {:value {:keys [:selection/list]}
      :action #(swap! state update :selection/list conj ident)}))

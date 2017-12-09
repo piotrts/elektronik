@@ -34,10 +34,10 @@
 
 ;; instance
 ;; ----------------------------------------------------------------------------
-(s/def :db/id om/tempid?)
+(s/def :instance/id om/tempid?)
 (s/def :instance/factory ::factory)
 (s/def :instance/x integer?)
 (s/def :instance/y integer?)
 
 (s/def ::instance
-  (s/keys :req [:db/id :instance/factory :instance/x :instance/y]))
+  (s/keys :req [:instance/id :instance/factory :instance/x :instance/y]))

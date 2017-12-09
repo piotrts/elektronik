@@ -58,12 +58,12 @@
 (defui Instance
   static om/Ident
   (ident [this props]
-    (let [{:keys [db/id]} props]
+    (let [{:keys [instance/id]} props]
       [:instances/by-id id]))
   static om/IQuery
   (query [this]
     (let [factory-query (om/get-query Factory)]
-      `[:db/id :instance/x :instance/y {:instance/factory ~factory-query}]))
+      `[:instance/id :instance/x :instance/y {:instance/factory ~factory-query}]))
   Object
   (render [this]
     (let [{:keys [render-instance]} (om/get-computed this)]
@@ -176,13 +176,13 @@
     (if (= :select new-pointer-state)
       (let [instance-db-id (pointer-event->instance-db-id ev)]
         (om/transact! component (cond-> '[(selection/clear)]
-                                  instance-db-id (conj `(selection/add-instance {:db/id ~instance-db-id}))))))
+                                  instance-db-id (conj `(selection/add-instance {:instance/id ~instance-db-id}))))))
     (reset! pointer-state new-pointer-state)))
 
 (defui SVGRenderer
   Object
   (render-instance [_ this]
-    (let [{:keys [db/id instance/x instance/y]
+    (let [{:keys [instance/id instance/x instance/y]
            {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
       (dom/g #js{:data-instance-id (str id)}
         (dom/rect #js{:style (get-in stylesheet [:instance :rect])
