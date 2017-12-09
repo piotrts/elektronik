@@ -173,7 +173,7 @@
 
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
-    (if (= :select new-pointer-state)
+    (if (some #{:select} new-pointer-state)
       (let [instance-db-id (pointer-event->instance-db-id ev)]
         (om/transact! component (cond-> '[(selection/clear)]
                                   instance-db-id (conj `(selection/add-instance {:instance/id ~instance-db-id}))))))
