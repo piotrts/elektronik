@@ -142,7 +142,7 @@
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
 
-(def pointer-state (atom :none))
+(def pointer-state (atom [:none]))
 
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
@@ -155,21 +155,21 @@
     reader/read-string))
 
 (defn pointer-event->pointer-state [ev]
-  (let [state @pointer-state
+  (let [state (last @pointer-state)
         type (.-type ev)]
     (case [state type]
-      [:none "mousedown"] :down
-      [:none "mousemove"] :none
-      [:none "mouseup"] :none
-      [:down "mousedown"] :down
-      [:down "mousemove"] :drag
-      [:down "mouseup"] :select
-      [:drag "mousedown"] :none
-      [:drag "mousemove"] :drag
-      [:drag "mouseup"] :none
-      [:select "mousedown"] :down
-      [:select "mousemove"] :drag
-      [:select "mouseup"] :select)))
+      [:none "mousedown"] [:down]
+      [:none "mousemove"] [:none]
+      [:none "mouseup"] [:none]
+      [:down "mousedown"] [:down]
+      [:down "mousemove"] [:select :drag]
+      [:down "mouseup"] [:select]
+      [:drag "mousedown"] [:none]
+      [:drag "mousemove"] [:drag]
+      [:drag "mouseup"] [:none]
+      [:select "mousedown"] [:down]
+      [:select "mousemove"] [:none]
+      [:select "mouseup"] [:none])))
 
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
