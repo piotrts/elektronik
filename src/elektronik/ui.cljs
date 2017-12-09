@@ -40,9 +40,9 @@
 (defui Toolbar
   Object
   (render [this]
-    (let [{:keys [factories/list]} (om/props this)]
+    (let [factories-list (om/props this)]
       (dom/div nil
-        (map #(toolbar-button this %) list)))))
+        (map #(toolbar-button this %) factories-list)))))
 
 (def toolbar (om/factory Toolbar))
 
@@ -136,11 +136,11 @@
 (defui Panels
   Object
   (render [this]
-    (let [{:keys [panels/list]} (om/props this)]
+    (let [panels-list (om/props this)]
       (dom/div #js{:id "panels"}
-        (map panel list)))))
+        (map panel panels-list)))))
 
-(def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels (:panels/list %))})) ; temporary
+(def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
 
 (def pointer-state (atom :none))
 
@@ -240,8 +240,10 @@
   ;            y (.-y position)]))))
   ;        (om/transact! this `[(instance/create #:instance{:type :math/addition :x ~x :y ~y})])))))
   (render [this]
-    (let [props (om/props this)]
+    (let [{factories-list :factories/list
+           panels-list :panels/list
+           :as props} (om/props this)]
       (dom/div #js{:id "elektronik"}
-        (toolbar props)
-        (panels props)
+        (toolbar factories-list)
+        (panels panels-list)
         (svg-renderer props)))))
