@@ -46,4 +46,4 @@
                   [id (replace fns deps)])))
             dependency-graph))))
 
-(transpile-static @(om/app-state reconciler))
+;(transpile-static @(om.next/app-state elektronik.core/reconciler))
