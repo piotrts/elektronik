@@ -85,7 +85,7 @@
         tempid (om/tempid)
         instance-ident [:instances/by-id tempid]
         factory-ident [:factories/by-id id]
-        new-instance #:instance{:db/id tempid
+        new-instance #:instance{:id tempid
                                 :factory factory-ident
                                 :x x
                                 :y y}]
