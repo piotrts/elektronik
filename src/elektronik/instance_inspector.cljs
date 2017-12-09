@@ -5,10 +5,10 @@
 (defui InstanceInspector
   static om/IQuery
   (query [this]
-    [{:selection/list '[*]}])
+    [[:selection/list '_]])
   Object
   (render [this]
-    (let [selected (get-in (om/props this) [:panel/data :selection/list 0])]
+    (let [selected (get-in (om/props this) [:selection/list 0])]
       (dom/div #js{:id "instance-inspector"}
         (if selected
           (map (fn [[param value]]

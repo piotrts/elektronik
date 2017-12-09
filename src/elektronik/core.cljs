@@ -55,6 +55,7 @@
                    :to [:instances/by-id instance-2-id]}]}))
 
 (defmulti read om/dispatch)
+
 (defmulti mutate om/dispatch)
 
 (defmethod read :factories/list [{:keys [query state]} k _]
@@ -72,13 +73,6 @@
 (defmethod read :panels/list [{:keys [query state]} k _]
   (let [st @state]
     {:value (om/db->tree query (get st k) st)}))
-
-(defmethod read :panels/data [{:keys [query ast state parser]} k _]
-  (let [st @state]
-    {:value (reduce-kv (fn [acc k v]
-                         (assoc acc k (parser {:state state} v)))
-                       {}
-                       query)}))
 
 (defmethod read :links/list [{:keys [query state]} k _]
   (let [st @state]
