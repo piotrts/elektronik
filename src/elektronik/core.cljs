@@ -62,27 +62,12 @@
   (let [st @state]
     {:value (vals (get st :factories/by-type))}))
 
-(defmethod read :instances/list [{:keys [query state]} k _]
+(defmethod read :default [{:keys [query ast state]} k params]
   (let [st @state]
-    {:value (om/db->tree query (get st k) st)}))
-
-(defmethod read :selection/list [{:keys [query state]} k _]
-  (let [st @state]
-    {:value (om/db->tree query (get st k) st)}))
-
-(defmethod read :panels/list [{:keys [query state]} k _]
-  (let [st @state]
-    {:value (om/db->tree query (get st k) st)}))
-
-(defmethod read :links/list [{:keys [query state]} k _]
-  (let [st @state]
-    {:value (om/db->tree query (get st k) st)}))
-
-(defmethod read :default [{:keys [query state]} k params]
-  (let [st @state]
-    (if-let [[_ v] (find st k)]
-      {:value v}
-      {:value :not-found})))
+    {:value (let [getter (if (om.util/ident? (:key ast))
+                           get-in
+                           get)]
+              (om/db->tree query (getter st k) st))}))
 
 (defmethod mutate 'selection/clear [{:keys [state]} _ _]
   {:value {:keys [:selection/list]}
