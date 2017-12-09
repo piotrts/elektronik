@@ -74,14 +74,14 @@
 (defui Link
   static om/IQuery
   (query [this]
-    `[{:from [:instance/x :instance/y]}
-      {:to [:instance/x :instance/y]}])
+    `[{:link/from [:instance/x :instance/y]}
+      {:link/to [:instance/x :instance/y]}])
   Object
   (render [this]
     (let [{{from-x :instance/x
-            from-y :instance/y} :from
+            from-y :instance/y} :link/from
            {to-x :instance/x
-            to-y :instance/y} :to} (om/props this)]
+            to-y :instance/y} :link/to} (om/props this)]
       (dom/line #js{:x1 from-x
                     :y1 from-y
                     :x2 to-x

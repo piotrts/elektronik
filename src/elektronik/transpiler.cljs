@@ -3,8 +3,8 @@
 ;; work in progress, quick and dirty
 (defn collect-instances [links]
   (mapcat (fn [link]
-            (let [{[_ from-id] :from
-                   [_ to-id] :to} link]
+            (let [{[_ from-id] :link/from
+                   [_ to-id] :link/to} link]
               [from-id to-id]))
           links))
 
@@ -22,8 +22,8 @@
                              [instance {}])
                            (collect-instances links)))]
     (reduce (fn [graph link]
-              (let [{[_ from-id] :from
-                     [_ to-id] :to} link]
+              (let [{[_ from-id] :link/from
+                     [_ to-id] :link/to} link]
                 (update-in graph [to-id :deps] conj from-id)))
             empty-graph
             links)))
@@ -46,4 +46,4 @@
                   [id (replace fns deps)])))
             dependency-graph))))
 
-;(transpile-static @(om/app-state reconciler))
+(transpile-static @(om/app-state reconciler))

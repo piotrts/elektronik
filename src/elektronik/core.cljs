@@ -47,10 +47,10 @@
                                  :factory subtraction-component-factory
                                  :x 210
                                  :y 10}]
-     :links/list [{:from [:instances/by-id instance-1-id]
-                   :to [:instances/by-id instance-2-id]}
-                  {:from [:instances/by-id instance-3-id]
-                   :to [:instances/by-id instance-2-id]}]}))
+     :links/list [#:link{:from [:instances/by-id instance-1-id]
+                         :to [:instances/by-id instance-2-id]}
+                  #:link{:from [:instances/by-id instance-3-id]
+                         :to [:instances/by-id instance-2-id]}]}))
 
 (defmulti read om/dispatch)
 
