@@ -35,7 +35,7 @@
         fns (into {}
               (map (fn [singleton]
                      (let [factory-ident (get-in state [:instances/by-id singleton :instance/factory])
-                           factory-fn (get-in state (conj factory-ident :factory/fn))]
+                           factory-fn (get-in state (conj factory-ident :factory/id))]
                        [singleton factory-fn]))
                    singletons))]
     (into {}

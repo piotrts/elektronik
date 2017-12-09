@@ -11,13 +11,11 @@
 
 (def addition-component-factory
   #:factory{:id :math/addition
-            :fn :+
             :name "+"
             :desc "Addition"})
 
 (def subtraction-component-factory
   #:factory{:id :math/subtraction
-            :fn :-
             :name "-"
             :desc "Subtraction"})
 
@@ -81,12 +79,12 @@
 ;(defmethod mutate 'selection/drag [{:keys [state parser]} _ {:keys [x y]}]
 ;  (println (parser {:state state} '[{:selection/list[:db/id]}])))
 
-(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [instance/type instance/x instance/y]}]
+(defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [factory/id instance/x instance/y]}]
   (let [x (or x (rand-int 500))
         y (or y (rand-int 500))
         tempid (om/tempid)
         instance-ident [:instances/by-id tempid]
-        factory-ident [:factories/by-id type]
+        factory-ident [:factories/by-id id]
         new-instance #:instance{:db/id tempid
                                 :factory factory-ident
                                 :x x

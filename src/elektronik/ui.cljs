@@ -34,7 +34,7 @@
   (let [{:keys [factory/name factory/id]} factory]
     (dom/button #js{:key (str "toolbar-factory-" name)
                     :onClick (fn [_]
-                               (om/transact! x `[(instance/create {:instance/type ~id})]))}
+                               (om/transact! x `[(instance/create {:factory/id ~id})]))}
       name)))
 
 (defui Toolbar
