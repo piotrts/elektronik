@@ -196,9 +196,8 @@
           rel (gstyle/getRelativePosition ev svg-node)
           x (- (.-x rel) dx)
           y (- (.-y rel) dy)]
-      (om/transact! component `[(selection/drag #:instance{:id ~instance-db-id ;; TODO use id from selection
-                                                           :x ~x
-                                                           :y ~y})]))))
+      (om/transact! component `[(selection/drag {:x ~x :y ~y})]))))
+
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
     (when (some #{:select} new-pointer-state)
