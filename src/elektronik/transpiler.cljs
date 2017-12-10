@@ -43,7 +43,8 @@
               (let [id (key e)
                     deps (:deps (val e))]
                 (when (seq deps)
-                  [id (replace fns deps)])))
+                  {:factory/id id
+                   :fn/args (replace fns deps)})))
             dependency-graph))))
 
 ;(state->ast @(om.next/app-state elektronik.core/reconciler))
