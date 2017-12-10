@@ -190,13 +190,15 @@
     (om/transact! component '[(selection/clear)])))
 
 (defn process-drag-event [component pointer-state ev]
-  (when-let [instance-db-id (pointer-event->instance-db-id ev)]
-    (let [svg-node (om/react-ref component "svg-container")
-          [dx dy] @pointer-deltas
-          rel (gstyle/getRelativePosition ev svg-node)
-          x (- (.-x rel) dx)
-          y (- (.-y rel) dy)]
-      (om/transact! component `[(selection/drag {:x ~x :y ~y})]))))
+  (let [reconciler (om/get-reconciler component)
+        state @(om/app-state reconciler)]
+    (when (seq (:selection/list state))
+      (let [svg-node (om/react-ref component "svg-container")
+            [dx dy] @pointer-deltas
+            rel (gstyle/getRelativePosition ev svg-node)
+            x (- (.-x rel) dx)
+            y (- (.-y rel) dy)]
+        (om/transact! component `[(selection/drag {:x ~x :y ~y})])))))
 
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
