@@ -11,9 +11,10 @@
 
 (def stylesheet
   {:instance
-   {:rect #js{:fill "gray"
-              :strokeWidth 1
-              :stroke "black"}
+   {:rect {:default #js{:fill "gray"
+                        :strokeWidth 1
+                        :stroke "black"}
+           :selected #js{:fill "blue"}}
     :text #js{:pointerEvents "none"}}})
 
 (def panel-id->component
@@ -63,7 +64,9 @@
   static om/IQuery
   (query [this]
     (let [factory-query (om/get-query Factory)]
-      `[:instance/id :instance/x :instance/y {:instance/factory ~factory-query}]))
+      `[:instance/id :instance/x :instance/y
+        {:instance/factory ~factory-query}
+        {[:selection/list 0] [:instance/id]}])) ; TODO this assumes selection/list contains only one entry
   Object
   (render [this]
     (let [{:keys [render-instance]} (om/get-computed this)]
@@ -207,10 +210,16 @@
 (defui SVGRenderer
   Object
   (render-instance [_ this]
-    (let [{:keys [instance/id instance/x instance/y]
-           {:keys [factory/name factory/desc]} :instance/factory} (om/props this)]
+    (let [{{selected-instance-id :instance/id} [:selection/list 0]
+           :keys [instance/id instance/x instance/y]
+           {:keys [factory/name factory/desc]} :instance/factory} (om/props this)
+           selected? (= (second (om/get-ident this)) selected-instance-id)
+           style (get-in stylesheet [:instance :rect :default])
+           style (if selected?
+                   (.assign js/Object #js{} style (get-in stylesheet [:instance :rect :selected]))
+                   style)]
       (dom/g #js{:data-instance-id (str id)}
-        (dom/rect #js{:style (get-in stylesheet [:instance :rect])
+        (dom/rect #js{:style style
                       :x x
                       :y y
                       :width 50
