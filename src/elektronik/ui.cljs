@@ -177,15 +177,14 @@
       [:select "mouseup"] [:none])))
 
 (defn process-select-event [component pointer-state ev]
-  (let [instance-db-id (pointer-event->instance-db-id ev)]
-    (om/transact! component (cond-> '[(selection/clear)]
-                              instance-db-id (conj `(selection/add-instance {:instance/id ~instance-db-id}))))
-    (reset! pointer-deltas (let [svg-node (om/react-ref component "svg-container")
-                                 svg-rect-node (pointer-event->svg-rect ev)
-                                 target (.-target ev)]
-                             (when (gdom/contains svg-node target)
-                               (let [rel (gstyle/getRelativePosition ev svg-rect-node)]
-                                 [(.-x rel) (.-y rel)]))))))
+  (if-let [instance-db-id (pointer-event->instance-db-id ev)]
+    (do
+      (om/transact! component `[(selection/clear)
+                                (selection/add-instance {:instance/id ~instance-db-id})])
+      (reset! pointer-deltas (let [svg-rect-node (pointer-event->svg-rect ev)
+                                   rel (gstyle/getRelativePosition ev svg-rect-node)]
+                                 [(.-x rel) (.-y rel)])))
+    (om/transact! component '[(selection/clear)])))
 
 (defn process-drag-event [component pointer-state ev]
   (when-let [instance-db-id (pointer-event->instance-db-id ev)]
