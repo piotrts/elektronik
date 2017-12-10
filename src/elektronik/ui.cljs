@@ -15,7 +15,9 @@
                         :strokeWidth 1
                         :stroke "black"}
            :selected #js{:fill "blue"}}
-    :text #js{:pointerEvents "none"}}})
+    :text #js{:pointerEvents "none"}}
+   :link #js{:stroke "rgb(0,0,0)"
+             :strokeWidth 1}})
 
 (def panel-id->component
   {:query-inspector query-inspector/QueryInspector
@@ -89,8 +91,7 @@
                     :y1 from-y
                     :x2 to-x
                     :y2 to-y
-                    :style #js{:stroke "rgb(0,0,0)"
-                               :strokeWidth 1}}))))
+                    :style (:link stylesheet)}))))
 
 (def link (om/factory Link))
 
