@@ -61,11 +61,11 @@
     {:value (vals (get st :factories/by-id))}))
 
 (defmethod read :default [{:keys [query ast state]} k params]
-  (let [st @state]
-    {:value (let [getter (if (om.util/ident? (:key ast))
-                           get-in
-                           get)]
-              (om/db->tree query (getter st k) st))}))
+  (let [st @state
+        data (if (om.util/ident? (:key ast))
+               (get-in st (:key ast))
+               (get st k))]
+    {:value (om/db->tree query data st)}))
 
 (defmethod mutate 'selection/clear [{:keys [state]} _ _]
   {:value {:keys [:selection/list]}
