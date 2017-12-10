@@ -5,10 +5,6 @@
             [goog.dom :as gdom]
             [goog.style :as gstyle]))
 
-(def processor-store
-  (atom {:state [:none]
-         :deltas nil}))
-
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
 
@@ -61,10 +57,17 @@
             y (- (.-y rel) dy)]
         (om/transact! component `[(selection/drag {:x ~x :y ~y})])))))
 
-(defn pointer-events-processor [component ev]
+(defn pointer-events-processor [processor-store component ev]
   (let [pointer-state (pointer-event->pointer-state processor-store ev)]
     (when (some #{:select} pointer-state)
       (process-select-event processor-store pointer-state component ev))
     (when (some #{:drag} pointer-state)
       (process-drag-event processor-store pointer-state component ev))
     (swap! processor-store assoc :state pointer-state)))
+
+
+(defn make-pointer-events-processor []
+  (let [processor-store (atom {:state [:none]
+                               :deltas nil})]
+    (fn [component ev]
+      (pointer-events-processor processor-store component ev))))

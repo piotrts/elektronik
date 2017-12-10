@@ -1,5 +1,6 @@
 (ns elektronik.core
-  (:require [elektronik.ui :as ui]
+  (:require [elektronik.pointer-events-processor :as pointer-events-processor]
+            [elektronik.ui :as ui]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]
@@ -113,7 +114,9 @@
     {:state app-state
      :parser parser
      :normalize true
-     :shared ui/shared
+     :shared (merge
+               {:pointer-events-processor (pointer-events-processor/make-pointer-events-processor)}
+               ui/shared)
      :id-key :db/id}))
 
 (om/add-root! reconciler ui/Root (gdom/getElement "app"))

@@ -2,7 +2,6 @@
   (:require [elektronik.query-inspector :as query-inspector]
             [elektronik.state-inspector :as state-inspector]
             [elektronik.instance-inspector :as instance-inspector]
-            [elektronik.pointer-events-processor :as pointer-events-processor]
             [elektronik.specs :as specs]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
@@ -174,14 +173,15 @@
   (render [this]
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen
-           :as props} (om/props this)]
+           :as props} (om/props this)
+          pointer-events-processor (om/shared this :pointer-events-processor)]
       (dom/svg #js{:ref "svg-container"
                    :style (:svg stylesheet)
                    :width "100%"
                    :height "100%"
-                   :onMouseDown #(pointer-events-processor/pointer-events-processor this %)
-                   :onMouseMove #(pointer-events-processor/pointer-events-processor this %)
-                   :onMouseUp #(pointer-events-processor/pointer-events-processor this %)}
+                   :onMouseDown #(pointer-events-processor this %)
+                   :onMouseMove #(pointer-events-processor this %)
+                   :onMouseUp #(pointer-events-processor this %)}
         (map (fn [instance-props]
                (instance (om/computed
                            instance-props
