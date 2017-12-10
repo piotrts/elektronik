@@ -2,6 +2,7 @@
   (:require [elektronik.query-inspector :as query-inspector]
             [elektronik.state-inspector :as state-inspector]
             [elektronik.instance-inspector :as instance-inspector]
+            [elektronik.utils :as utils]
             [elektronik.specs :as specs]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
@@ -155,7 +156,7 @@
            selected? (= (second (om/get-ident this)) selected-instance-id)
            style (get-in stylesheet [:instance :rect :default])
            style (if selected?
-                   (.assign js/Object #js{} style (get-in stylesheet [:instance :rect :selected]))
+                   (utils/js-merge style (get-in stylesheet [:instance :rect :selected]))
                    style)]
       (dom/g #js{:data-instance-id (str id)}
         (dom/rect #js{:style style
