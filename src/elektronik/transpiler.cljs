@@ -28,7 +28,7 @@
             empty-graph
             links)))
 
-(defn transpile-static [state]
+(defn state->ast [state]
   (let [{links :links/list} state
         dependency-graph (create-dependency-graph links)
         singletons (collect-singletons dependency-graph)
@@ -46,4 +46,4 @@
                   [id (replace fns deps)])))
             dependency-graph))))
 
-;(transpile-static @(om.next/app-state elektronik.core/reconciler))
+;(state->ast @(om.next/app-state elektronik.core/reconciler))
