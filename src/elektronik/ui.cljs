@@ -189,16 +189,13 @@
 (defn process-drag-event [component pointer-state ev]
   (when-let [instance-db-id (pointer-event->instance-db-id ev)]
     (let [svg-node (om/react-ref component "svg-container")
-          svg-rect-node (pointer-event->svg-rect ev)
-          target (.-target ev)]
-      (when (gdom/contains svg-node target)
-        (let [[dx dy] @pointer-deltas
-              rel (gstyle/getRelativePosition ev svg-node)
-              x (- (.-x rel) dx)
-              y (- (.-y rel) dy)]
-          (om/transact! component `[(selection/drag #:instance{:id ~instance-db-id ;; TODO use id from selection
-                                                               :x ~x
-                                                               :y ~y})]))))))
+          [dx dy] @pointer-deltas
+          rel (gstyle/getRelativePosition ev svg-node)
+          x (- (.-x rel) dx)
+          y (- (.-y rel) dy)]
+      (om/transact! component `[(selection/drag #:instance{:id ~instance-db-id ;; TODO use id from selection
+                                                           :x ~x
+                                                           :y ~y})]))))
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
     (when (some #{:select} new-pointer-state)
