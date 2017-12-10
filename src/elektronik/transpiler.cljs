@@ -24,7 +24,7 @@
     (reduce (fn [graph link]
               (let [{[_ from-id] :link/from
                      [_ to-id] :link/to} link]
-                (update-in graph [to-id :deps] conj from-id)))
+                (update-in graph [to-id :deps] (fnil conj []) from-id)))
             empty-graph
             links)))
 
@@ -47,4 +47,4 @@
                    :fn/args (replace fns deps)})))
             dependency-graph))))
 
-;(state->ast @(om.next/app-state elektronik.core/reconciler))
+(state->ast @(om.next/app-state elektronik.core/reconciler))
