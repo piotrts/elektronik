@@ -5,8 +5,9 @@
             [goog.dom :as gdom]
             [goog.style :as gstyle]))
 
-(def pointer-state (atom [:none]))
-(def pointer-deltas (atom 0))
+(def processor-store
+  (atom {:state [:none]
+         :deltas nil}))
 
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
@@ -22,8 +23,8 @@
     get-element-data-instance-id
     reader/read-string))
 
-(defn pointer-event->pointer-state [ev]
-  (let [state (last @pointer-state)
+(defn pointer-event->pointer-state [processor-store ev]
+  (let [state (last (:state @processor-store))
         type (.-type ev)]
     (case [state type]
       [:none "mousedown"] [:down]
@@ -39,31 +40,31 @@
       [:select "mousemove"] [:none]
       [:select "mouseup"] [:none])))
 
-(defn process-select-event [component pointer-state ev]
+(defn process-select-event [processor-store _ component ev]
   (if-let [instance-db-id (pointer-event->instance-db-id ev)]
     (do
       (om/transact! component `[(selection/clear)
                                 (selection/add-instance {:instance/id ~instance-db-id})])
-      (reset! pointer-deltas (let [svg-rect-node (pointer-event->svg-rect ev)
-                                   rel (gstyle/getRelativePosition ev svg-rect-node)]
-                               [(.-x rel) (.-y rel)])))
+      (swap! processor-store assoc :deltas (let [svg-rect-node (pointer-event->svg-rect ev)
+                                                 rel (gstyle/getRelativePosition ev svg-rect-node)]
+                                             [(.-x rel) (.-y rel)])))
     (om/transact! component '[(selection/clear)])))
 
-(defn process-drag-event [component pointer-state ev]
+(defn process-drag-event [processor-store pointer-state component ev]
   (let [reconciler (om/get-reconciler component)
         state @(om/app-state reconciler)]
     (when (seq (:selection/list state))
       (let [svg-node (om/react-ref component "svg-container")
-            [dx dy] @pointer-deltas
+            [dx dy] (:deltas @processor-store)
             rel (gstyle/getRelativePosition ev svg-node)
             x (- (.-x rel) dx)
             y (- (.-y rel) dy)]
         (om/transact! component `[(selection/drag {:x ~x :y ~y})])))))
 
 (defn pointer-events-processor [component ev]
-  (let [new-pointer-state (pointer-event->pointer-state ev)]
-    (when (some #{:select} new-pointer-state)
-      (process-select-event component new-pointer-state ev))
-    (when (some #{:drag} new-pointer-state)
-      (process-drag-event component new-pointer-state ev))
-    (reset! pointer-state new-pointer-state)))
+  (let [pointer-state (pointer-event->pointer-state processor-store ev)]
+    (when (some #{:select} pointer-state)
+      (process-select-event processor-store pointer-state component ev))
+    (when (some #{:drag} pointer-state)
+      (process-drag-event processor-store pointer-state component ev))
+    (swap! processor-store assoc :state pointer-state)))
