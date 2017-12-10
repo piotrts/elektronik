@@ -76,8 +76,9 @@
     {:value {:keys [:selection/list]}
      :action #(swap! state update :selection/list conj ident)}))
 
-;(defmethod mutate 'selection/drag [{:keys [state parser]} _ {:keys [x y]}]
-;  (println (parser {:state state} '[{:selection/list[:db/id]}])))
+(defmethod mutate 'selection/drag [{:keys [state parser]} _ {:keys [instance/id instance/x instance/y]}]
+  (let [instance-ident [:instances/by-id id]]
+    {:action #(swap! state update-in instance-ident assoc :instance/x x :instance/y y)}))
 
 (defmethod mutate 'instance/create [{:keys [query state]} _ {:keys [factory/id instance/x instance/y]}]
   (let [x (or x (rand-int 500))

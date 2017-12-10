@@ -143,14 +143,19 @@
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
 
 (def pointer-state (atom [:none]))
+(def pointer-deltas (atom 0))
 
 (defn get-element-data-instance-id [e]
   (aget (.-dataset e) "instanceId"))
 
-(defn pointer-event->instance-db-id [ev]
+(defn pointer-event->svg-rect [ev]
   (some-> ev
     .-target
-    (gdom/getAncestor get-element-data-instance-id true 2)
+    (gdom/getAncestor get-element-data-instance-id true 2)))
+
+(defn pointer-event->instance-db-id [ev]
+  (some-> ev
+    pointer-event->svg-rect
     get-element-data-instance-id
     reader/read-string))
 
@@ -171,12 +176,36 @@
       [:select "mousemove"] [:none]
       [:select "mouseup"] [:none])))
 
+(defn process-select-event [component pointer-state ev]
+  (let [instance-db-id (pointer-event->instance-db-id ev)]
+    (om/transact! component (cond-> '[(selection/clear)]
+                              instance-db-id (conj `(selection/add-instance {:instance/id ~instance-db-id}))))
+    (reset! pointer-deltas (let [svg-node (om/react-ref component "svg-container")
+                                 svg-rect-node (pointer-event->svg-rect ev)
+                                 target (.-target ev)]
+                             (when (gdom/contains svg-node target)
+                               (let [rel (gstyle/getRelativePosition ev svg-rect-node)]
+                                 [(.-x rel) (.-y rel)]))))))
+
+(defn process-drag-event [component pointer-state ev]
+  (when-let [instance-db-id (pointer-event->instance-db-id ev)]
+    (let [svg-node (om/react-ref component "svg-container")
+          svg-rect-node (pointer-event->svg-rect ev)
+          target (.-target ev)]
+      (when (gdom/contains svg-node target)
+        (let [[dx dy] @pointer-deltas
+              rel (gstyle/getRelativePosition ev svg-node)
+              x (- (.-x rel) dx)
+              y (- (.-y rel) dy)]
+          (om/transact! component `[(selection/drag #:instance{:id ~instance-db-id ;; TODO use id from selection
+                                                               :x ~x
+                                                               :y ~y})]))))))
 (defn pointer-events-processor [component ev]
   (let [new-pointer-state (pointer-event->pointer-state ev)]
-    (if (some #{:select} new-pointer-state)
-      (let [instance-db-id (pointer-event->instance-db-id ev)]
-        (om/transact! component (cond-> '[(selection/clear)]
-                                  instance-db-id (conj `(selection/add-instance {:instance/id ~instance-db-id}))))))
+    (when (some #{:select} new-pointer-state)
+      (process-select-event component new-pointer-state ev))
+    (when (some #{:drag} new-pointer-state)
+      (process-drag-event component new-pointer-state ev))
     (reset! pointer-state new-pointer-state)))
 
 (defui SVGRenderer

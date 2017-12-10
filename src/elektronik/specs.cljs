@@ -36,8 +36,8 @@
 ;; ----------------------------------------------------------------------------
 (s/def :instance/id om/tempid?)
 (s/def :instance/factory ::factory)
-(s/def :instance/x integer?)
-(s/def :instance/y integer?)
+(s/def :instance/x number?)
+(s/def :instance/y number?)
 
 (s/def ::instance
   (s/keys :req [:instance/id :instance/factory :instance/x :instance/y]))
