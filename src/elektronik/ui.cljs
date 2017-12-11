@@ -50,6 +50,16 @@
 
 (def toolbar (om/factory Toolbar))
 
+(defui Socket
+  static om/Ident
+  (ident [this props]
+    (let [{:keys [socket/id socket/type]} props]
+      (println type id)
+      [:sockets/by-type&id type id]))
+  static om/IQuery
+  (query [this]
+    [:socket/id :socket/type]))
+
 (defui Factory
   static om/Ident
   (ident [this props]
@@ -66,9 +76,10 @@
       [:instances/by-id id]))
   static om/IQuery
   (query [this]
-    (let [factory-query (om/get-query Factory)]
+    (let [factory-query (om/get-query Factory)
+          socket-query (om/get-query Socket)]
       `[:instance/id :instance/x :instance/y
-        {:instance/factory ~factory-query}
+        {:instance/factory ~(conj factory-query {:factory/sockets socket-query})}
         {[:selection/list 0] [:instance/id]}])) ; TODO this assumes selection/list contains only one entry
   Object
   (render [this]

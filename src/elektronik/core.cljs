@@ -13,12 +13,24 @@
 (def addition-component-factory
   #:factory{:id :math/addition
             :name "+"
-            :desc "Addition"})
+            :desc "Addition"
+            :sockets [#:socket{:id :x
+                               :type :input}
+                      #:socket{:id :y
+                               :type :input}
+                      #:socket{:id :result
+                               :type :output}]})
 
 (def subtraction-component-factory
   #:factory{:id :math/subtraction
             :name "-"
-            :desc "Subtraction"})
+            :desc "Subtraction"
+            :sockets [#:socket{:id :x
+                               :type :input}
+                      #:socket{:id :y
+                               :type :input}
+                      #:socket{:id :result
+                               :type :output}]})
 
 (def app-state
   (let [instance-1-id (om/tempid)
