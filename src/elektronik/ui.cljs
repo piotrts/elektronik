@@ -45,7 +45,7 @@
   Object
   (render [this]
     (let [factories-list (om/props this)]
-      (dom/div nil
+      (dom/div #js{:className "toolbar"}
         (map #(toolbar-button this %) factories-list)))))
 
 (def toolbar (om/factory Toolbar))
@@ -142,7 +142,7 @@
   Object
   (render [this]
     (let [panels-list (om/props this)]
-      (dom/div #js{:id "panels"}
+      (dom/div #js{:className "panels"}
         (map panel panels-list)))))
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
@@ -165,11 +165,12 @@
                       :width 50
                       :height 50})
         (dom/text #js{:style (get-in stylesheet [:instance :text])
-                      :x x
-                      :y y
+                      :x (+ 25 x)
+                      :y (+ 25 y)
                       :stroke "none"
                       :fill "white"
-                      :alignmentBaseline "hanging"
+                      :alignmentBaseline "middle"
+                      :textAnchor "middle"
                       :fontSize 20}
           name))))
   (render [this]
@@ -178,6 +179,7 @@
            :as props} (om/props this)
           pointer-events-processor (om/shared this :pointer-events-processor)]
       (dom/svg #js{:ref "svg-container"
+                   :className "svg-container"
                    :style (:svg stylesheet)
                    :width "100%"
                    :height "100%"
@@ -218,7 +220,7 @@
     (let [{factories-list :factories/list
            panels-list :panels/list
            :as props} (om/props this)]
-      (dom/div #js{:id "elektronik"}
+      (dom/div #js{:className "elektronik"}
         (toolbar factories-list)
         (panels panels-list)
         (svg-renderer props)))))
