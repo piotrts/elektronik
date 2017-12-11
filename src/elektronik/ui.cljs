@@ -54,7 +54,7 @@
   static om/Ident
   (ident [this props]
     (let [{:keys [socket/id socket/type]} props]
-      [:sockets/by-type&id type id]))
+      [type id]))
   static om/IQuery
   (query [this]
     [:socket/id :socket/type]))
@@ -82,8 +82,10 @@
         {[:selection/list 0] [:instance/id]}])) ; TODO this assumes selection/list contains only one entry
   Object
   (render [this]
-    (let [{:keys [render-instance]} (om/get-computed this)]
-      (render-instance this))))
+    (let [{:keys [render-instance render-sockets]} (om/get-computed this)]
+      (dom/g nil
+        (render-instance this)
+        (render-sockets this)))))
 
 (def instance (om/factory Instance {:validator #(specs/default-validator ::specs/instance %)}))
 
@@ -157,6 +159,28 @@
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
 
+(defn lerp [start end step]
+  (+ start (* step (- end start))))
+
+(defn calculate-socket-positions [sockets]
+  (let [sockets-count (count sockets)]
+    (if (= 1 sockets-count)
+      (list (lerp -5 45 0.5))
+      (map (fn [idx]
+             (lerp -5 45 (* idx (/ 1 (max 1 (dec sockets-count))))))
+           (range sockets-count)))))
+
+(defn render-socket [instance socket x y]
+  (let [{instance-id :instance/id} instance
+        {:keys [socket/type socket/id]} socket
+        style (get-in stylesheet [:instance :rect :default])]
+    (dom/rect #js{:key (str "socket-" instance-id "-" (name type) "-" (name id))
+                  :style style
+                  :x x
+                  :y y
+                  :width 10
+                  :height 10})))
+
 (defui SVGRenderer
   Object
   (render-instance [_ this]
@@ -183,6 +207,16 @@
                       :textAnchor "middle"
                       :fontSize 20}
           name))))
+  (render-sockets [_ this]
+    (let [{:keys [instance/x instance/y]
+           {:keys [factory/sockets]} :instance/factory
+           :as instance} (om/props this)
+          {inputs :input outputs :output} (group-by :socket/type sockets)
+          input-xs (calculate-socket-positions inputs)
+          output-xs (calculate-socket-positions outputs)]
+      (dom/g nil
+        (map #(render-socket instance %1 (+ x %2) (- y 5)) inputs input-xs)
+        (map #(render-socket instance %1 (+ x %2) (+ 45 y)) outputs output-xs))))
   (render [this]
     (let [{:keys [instances/list]
            {:keys [width height]} :ui/screen
@@ -199,7 +233,8 @@
         (map (fn [instance-props]
                (instance (om/computed
                            instance-props
-                           {:render-instance (.-render-instance this)})))
+                           {:render-instance (.-render-instance this)
+                            :render-sockets (.-render-sockets this)})))
              list)
         (links props)))))
 
