@@ -17,6 +17,7 @@
                         :stroke "black"}
            :selected #js{:fill "blue"}}
     :text #js{:pointerEvents "none"}}
+   :socket #js{:fill "black"}
    :link #js{:stroke "rgb(0,0,0)"
              :strokeWidth 1}})
 
@@ -173,7 +174,7 @@
 (defn render-socket [instance socket x y]
   (let [{instance-id :instance/id} instance
         {:keys [socket/type socket/id]} socket
-        style (get-in stylesheet [:instance :rect :default])]
+        style (get-in stylesheet [:socket])]
     (dom/rect #js{:key (str "socket-" instance-id "-" (name type) "-" (name id))
                   :style style
                   :x x
