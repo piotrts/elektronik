@@ -93,14 +93,16 @@
 (defui Link
   static om/IQuery
   (query [this]
-    `[{:link/from [:instance/x :instance/y]}
-      {:link/to [:instance/x :instance/y]}])
+    `[{:link/from [{:instance/ident [:instance/x :instance/y]}
+                   {:socket/ident [:socket/id :socket/type]}]}
+      {:link/to [{:instance/ident [:instance/x :instance/y]}
+                 {:socket/ident [:socket/id :socket/type]}]}])
   Object
   (render [this]
-    (let [{{from-x :instance/x
-            from-y :instance/y} :link/from
-           {to-x :instance/x
-            to-y :instance/y} :link/to} (om/props this)]
+    (let [{{{from-x :instance/x from-y :instance/y} :instance/ident
+            from-socket :socket/ident} :link/from
+           {{to-x :instance/x to-y :instance/y} :instance/ident
+            to-socket :socket/ident} :link/to} (om/props this)]
       (dom/line #js{:x1 from-x
                     :y1 from-y
                     :x2 to-x

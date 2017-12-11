@@ -60,10 +60,14 @@
                                  :factory subtraction-component-factory
                                  :x 210
                                  :y 10}]
-     :links/list [#:link{:from [:instances/by-id instance-1-id]
-                         :to [:instances/by-id instance-2-id]}
-                  #:link{:from [:instances/by-id instance-3-id]
-                         :to [:instances/by-id instance-2-id]}]}))
+     :links/list [#:link{:from {:instance/ident [:instances/by-id instance-1-id]
+                                :socket/ident [:output :result]}
+                         :to {:instance/ident [:instances/by-id instance-2-id]
+                              :socket/ident [:input :x]}}
+                  #:link{:from {:instance/ident [:instances/by-id instance-3-id]
+                                :socket/ident [:output :result]}
+                         :to {:instance/ident [:instances/by-id instance-2-id]
+                              :socket/ident [:input :y]}}]}))
 
 (defmulti read om/dispatch)
 
