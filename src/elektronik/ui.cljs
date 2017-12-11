@@ -54,7 +54,6 @@
   static om/Ident
   (ident [this props]
     (let [{:keys [socket/id socket/type]} props]
-      (println type id)
       [:sockets/by-type&id type id]))
   static om/IQuery
   (query [this]
