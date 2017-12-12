@@ -162,15 +162,12 @@
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
 
-(defn lerp [start end step]
-  (+ start (* step (- end start))))
-
 (defn calculate-socket-positions [sockets]
   (let [sockets-count (count sockets)]
     (if (= 1 sockets-count)
-      (list (lerp -5 45 0.5))
+      (list (utils/lerp -5 45 0.5))
       (map (fn [idx]
-             (lerp -5 45 (* idx (/ 1 (max 1 (dec sockets-count))))))
+             (utils/lerp -5 45 (* idx (/ 1 (max 1 (dec sockets-count))))))
            (range sockets-count)))))
 
 (defn render-socket [instance socket x y]

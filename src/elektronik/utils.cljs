@@ -1,5 +1,8 @@
 (ns elektronik.utils)
 
+(defn lerp [start end step]
+  (+ start (* step (- end start))))
+
 (defn js-merge
   "Performs a merge of js objects. Returns a new instance of js/Object."
   ([]
