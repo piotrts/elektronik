@@ -91,23 +91,55 @@
 
 (def instance (om/factory Instance {:validator #(specs/default-validator ::specs/instance %)}))
 
+(defn calculate-socket-position [idx cnt]
+  (if (= 1 cnt)
+    (utils/lerp -5 45 0.5)
+    (utils/lerp -5 45 (* idx (/ 1 (max 1 (dec cnt)))))))
+
+(defn calculate-socket-positions [sockets]
+  (let [cnt (count sockets)]
+    (map (fn [idx]
+           (calculate-socket-position idx cnt))
+         (range cnt))))
+
+(defn find-socket-position [socket sockets]
+  (let [grouped-sockets (group-by :socket/type sockets)
+        {inputs :socket.type/input outputs :socket.type/output} grouped-sockets]
+     (or (some-> inputs
+           (zipmap (calculate-socket-positions inputs))
+           (get socket)
+           (vector -5))
+         (some-> outputs
+           (zipmap (calculate-socket-positions outputs))
+           (get socket)
+           (vector 45)))))
+
 (defui Link
   static om/IQuery
   (query [this]
-    (let [link-subquery [{:instance/ident [:instance/x :instance/y]}
+    (let [link-subquery [{:instance/ident
+                          [:instance/x :instance/y
+                           {:instance/factory [{:factory/sockets [:socket/id :socket/type]}]}]}
                          {:socket/ident [:socket/id :socket/type]}]]
       [{:link/from link-subquery}
        {:link/to link-subquery}]))
   Object
   (render [this]
-    (let [{{{from-x :instance/x from-y :instance/y} :instance/ident
+    ;; TODO cleanup
+    (let [{{{{from-sockets :factory/sockets} :instance/factory
+             from-x :instance/x
+             from-y :instance/y} :instance/ident
             from-socket :socket/ident} :link/from
-           {{to-x :instance/x to-y :instance/y} :instance/ident
-            to-socket :socket/ident} :link/to} (om/props this)]
-      (dom/line #js{:x1 from-x
-                    :y1 from-y
-                    :x2 to-x
-                    :y2 to-y
+           {{{to-sockets :factory/sockets} :instance/factory
+             to-x :instance/x
+             to-y :instance/y} :instance/ident
+            to-socket :socket/ident} :link/to} (om/props this)
+          [socket-from-x socket-from-y] (find-socket-position from-socket from-sockets)
+          [socket-to-x socket-to-y] (find-socket-position to-socket to-sockets)]
+      (dom/line #js{:x1 (+ from-x socket-from-x)
+                    :y1 (+ from-y socket-from-y)
+                    :x2 (+ to-x socket-to-x)
+                    :y2 (+ to-y socket-to-y)
                     :style (:link stylesheet)}))))
 
 (def link (om/factory Link))
@@ -160,14 +192,6 @@
         (map panel panels-list)))))
 
 (def panels (om/factory Panels {:validator #(specs/default-validator ::specs/panels %)}))
-
-(defn calculate-socket-positions [sockets]
-  (let [sockets-count (count sockets)]
-    (if (= 1 sockets-count)
-      (list (utils/lerp -5 45 0.5))
-      (map (fn [idx]
-             (utils/lerp -5 45 (* idx (/ 1 (max 1 (dec sockets-count))))))
-           (range sockets-count)))))
 
 (defn render-socket [instance socket x y]
   (let [{instance-id :instance/id} instance

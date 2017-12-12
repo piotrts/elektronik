@@ -65,7 +65,7 @@
                          :to {:instance/ident [:instances/by-id instance-2-id]
                               :socket/ident [:socket.type/input :socket.id/math.subtraction.x]}}
                   #:link{:from {:instance/ident [:instances/by-id instance-3-id]
-                                :socket/ident [:socket.type/output :socket.id/math.addition.result]}
+                                :socket/ident [:socket.type/output :socket.id/math.subtraction.result]}
                          :to {:instance/ident [:instances/by-id instance-2-id]
                               :socket/ident [:socket.type/input :socket.id/math.subtraction.y]}}]}))
 
