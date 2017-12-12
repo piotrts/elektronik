@@ -219,8 +219,7 @@
   (render [this]
     (let [{instances-list :instances/list
            links-list :links/list
-           {:keys [width height]} :ui/screen
-           :as props} (om/props this)
+           {:keys [width height]} :ui/screen} (om/props this)
           pointer-events-processor (om/shared this :pointer-events-processor)]
       (dom/svg #js{:ref "svg-container"
                    :className "svg-container"
