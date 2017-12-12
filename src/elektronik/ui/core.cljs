@@ -33,7 +33,9 @@
 
 (def shared
   {:panel-id->component panel-id->component
-   :panel-id->factory panel-id->factory})
+   :panel-id->factory panel-id->factory
+   :utf-collapse-indicator \u25B4
+   :utf-expand-indicator \u25BE})
 
 (defn toolbar-button [x factory]
   (let [{:keys [factory/name factory/id]} factory]
@@ -124,9 +126,6 @@
 
 (def links (om/factory Links))
 
-(def utf-arrow-collapse \u25B4)
-(def utf-arrow-expand \u25BE)
-
 (defui Panel
   static om/Ident
   (ident [this props]
@@ -139,13 +138,14 @@
   Object
   (render [this]
     (let [{:keys [panel/id panel/expanded? panel/name] :as panel-props} (om/props this)
+          {:keys [utf-collapse-indicator utf-expand-indicator]} (om/shared this)
           panel-subfactory ((om/shared this :panel-id->factory) id)]
       (dom/div #js{:id id
                    :className "panel"}
         (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
           (if expanded?
-            utf-arrow-collapse
-            utf-arrow-expand)
+            utf-collapse-indicator
+            utf-expand-indicator)
           " "
           name)
         (when expanded?
