@@ -119,9 +119,9 @@
       `[~@link-query]))
   Object
   (render [this]
-    (let [{:keys [links/list]} (om/props this)]
+    (let [links-list (om/props this)]
       (dom/g nil
-        (mapv link list)))))
+        (mapv link links-list)))))
 
 (def links (om/factory Links))
 
@@ -217,7 +217,8 @@
         (map #(render-socket instance %1 (+ x %2) (- y 5)) inputs input-xs)
         (map #(render-socket instance %1 (+ x %2) (+ 45 y)) outputs output-xs))))
   (render [this]
-    (let [{:keys [instances/list]
+    (let [{instances-list :instances/list
+           links-list :links/list
            {:keys [width height]} :ui/screen
            :as props} (om/props this)
           pointer-events-processor (om/shared this :pointer-events-processor)]
@@ -234,8 +235,8 @@
                            instance-props
                            {:render-instance (.-render-instance this)
                             :render-sockets (.-render-sockets this)})))
-             list)
-        (links props)))))
+             instances-list)
+        (links links-list)))))
 
 (def svg-renderer (om/factory SVGRenderer))
 
