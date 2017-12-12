@@ -22,9 +22,9 @@
              :strokeWidth 1}})
 
 (def panel-id->component
-  {:query-inspector query-inspector/QueryInspector
-   :state-inspector state-inspector/StateInspector
-   :instance-inspector instance-inspector/InstanceInspector})
+  #:panel.id{:query-inspector query-inspector/QueryInspector
+             :state-inspector state-inspector/StateInspector
+             :instance-inspector instance-inspector/InstanceInspector})
 
 (def panel-id->factory
   (zipmap (keys panel-id->component)
@@ -210,7 +210,7 @@
     (let [{:keys [instance/x instance/y]
            {:keys [factory/sockets]} :instance/factory
            :as instance} (om/props this)
-          {inputs :input outputs :output} (group-by :socket/type sockets)
+          {inputs :socket.type/input outputs :socket.type/output} (group-by :socket/type sockets)
           input-xs (calculate-socket-positions inputs)
           output-xs (calculate-socket-positions outputs)]
       (dom/g nil

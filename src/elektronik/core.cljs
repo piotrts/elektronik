@@ -14,23 +14,23 @@
   #:factory{:id :math/addition
             :name "+"
             :desc "Addition"
-            :sockets [#:socket{:id :x
-                               :type :input}
-                      #:socket{:id :y
-                               :type :input}
-                      #:socket{:id :result
-                               :type :output}]})
+            :sockets [#:socket{:id :socket.id/math.addition.x
+                               :type :socket.type/input}
+                      #:socket{:id :socket.id/math.addition.y
+                               :type :socket.type/input}
+                      #:socket{:id :socket.id/math.addition.result
+                               :type :socket.type/output}]})
 
 (def subtraction-component-factory
   #:factory{:id :math/subtraction
             :name "-"
             :desc "Subtraction"
-            :sockets [#:socket{:id :x
-                               :type :input}
-                      #:socket{:id :y
-                               :type :input}
-                      #:socket{:id :result
-                               :type :output}]})
+            :sockets [#:socket{:id :socket.id/math.subtraction.x
+                               :type :socket.type/input}
+                      #:socket{:id :socket.id/math.subtraction.y
+                               :type :socket.type/input}
+                      #:socket{:id :socket.id/math.subtraction.result
+                               :type :socket.type/output}]})
 
 (def app-state
   (let [instance-1-id (om/tempid)
@@ -38,13 +38,13 @@
         instance-3-id (om/tempid)]
     {:ui/screen {:width "100%"
                  :height "100%"}
-     :panels/list [#:panel{:id :query-inspector
+     :panels/list [#:panel{:id :panel.id/query-inspector
                            :name "Query Inspector"
                            :expanded? true}
-                   #:panel{:id :state-inspector
+                   #:panel{:id :panel.id/state-inspector
                            :name "State Inspector"
                            :expanded? true}
-                   #:panel{:id :instance-inspector
+                   #:panel{:id :panel.id/instance-inspector
                            :name "Instance Inspector"
                            :expanded? true}]
      :selection/list []
@@ -61,13 +61,13 @@
                                  :x 210
                                  :y 10}]
      :links/list [#:link{:from {:instance/ident [:instances/by-id instance-1-id]
-                                :socket/ident [:output :result]}
+                                :socket/ident [:socket.type/output :socket.id/math.addition.result]}
                          :to {:instance/ident [:instances/by-id instance-2-id]
-                              :socket/ident [:input :x]}}
+                              :socket/ident [:socket.type/input :socket.id/math.subtraction.x]}}
                   #:link{:from {:instance/ident [:instances/by-id instance-3-id]
-                                :socket/ident [:output :result]}
+                                :socket/ident [:socket.type/output :socket.id/math.addition.result]}
                          :to {:instance/ident [:instances/by-id instance-2-id]
-                              :socket/ident [:input :y]}}]}))
+                              :socket/ident [:socket.type/input :socket.id/math.subtraction.y]}}]}))
 
 (defmulti read om/dispatch)
 
