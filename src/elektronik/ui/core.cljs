@@ -93,10 +93,10 @@
 (defui Link
   static om/IQuery
   (query [this]
-    `[{:link/from [{:instance/ident [:instance/x :instance/y]}
-                   {:socket/ident [:socket/id :socket/type]}]}
-      {:link/to [{:instance/ident [:instance/x :instance/y]}
-                 {:socket/ident [:socket/id :socket/type]}]}])
+    (let [link-subquery [{:instance/ident [:instance/x :instance/y]}
+                         {:socket/ident [:socket/id :socket/type]}]]
+      [{:link/from link-subquery}
+       {:link/to link-subquery}]))
   Object
   (render [this]
     (let [{{{from-x :instance/x from-y :instance/y} :instance/ident
