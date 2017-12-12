@@ -137,8 +137,8 @@
   Object
   (render [this]
     (let [{:keys [panel/id panel/expanded? panel/name] :as panel-props} (om/props this)
-          {:keys [utf-collapse-indicator utf-expand-indicator]} (om/shared this)
-          panel-subfactory ((om/shared this :panel-id->factory) id)]
+          {:keys [panel-id->factory utf-collapse-indicator utf-expand-indicator]} (om/shared this)
+          panel-subfactory (panel-id->factory id)]
       (dom/div #js{:id id
                    :className "panel"}
         (dom/button #js{:onClick #(om/transact! this `[(panel/toggle {:panel/id ~id})])}
