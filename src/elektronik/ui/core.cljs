@@ -1,7 +1,7 @@
-(ns elektronik.ui
-  (:require [elektronik.query-inspector :as query-inspector]
-            [elektronik.state-inspector :as state-inspector]
-            [elektronik.instance-inspector :as instance-inspector]
+(ns elektronik.ui.core
+  (:require [elektronik.ui.panels.query-inspector :as query-inspector]
+            [elektronik.ui.panels.state-inspector :as state-inspector]
+            [elektronik.ui.panels.instance-inspector :as instance-inspector]
             [elektronik.utils :as utils]
             [elektronik.specs :as specs]
             [cljs.reader :as reader]

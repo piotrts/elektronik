@@ -1,6 +1,6 @@
 (ns elektronik.core
   (:require [elektronik.pointer-events-processor :as pointer-events-processor]
-            [elektronik.ui :as ui]
+            [elektronik.ui.core :as ui]
             [cljs.reader :as reader]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]

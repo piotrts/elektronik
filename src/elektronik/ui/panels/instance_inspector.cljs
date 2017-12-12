@@ -1,4 +1,4 @@
-(ns elektronik.instance-inspector
+(ns elektronik.ui.panels.instance-inspector
   (:require [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]))
 

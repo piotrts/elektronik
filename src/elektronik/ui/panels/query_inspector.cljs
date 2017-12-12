@@ -1,4 +1,4 @@
-(ns elektronik.query-inspector
+(ns elektronik.ui.panels.query-inspector
   (:require [clojure.pprint :as pprint]
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]))
