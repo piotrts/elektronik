@@ -91,26 +91,26 @@
 
 (def instance (om/factory Instance {:validator #(specs/default-validator ::specs/instance %)}))
 
-(defn calculate-socket-position [idx cnt]
+(defn calculate-socket-x-position [idx cnt]
   (if (= 1 cnt)
     (utils/lerp -5 45 0.5)
     (utils/lerp -5 45 (* idx (/ 1 (max 1 (dec cnt)))))))
 
-(defn calculate-socket-positions [sockets]
+(defn calculate-sockets-x-positions [sockets]
   (let [cnt (count sockets)]
     (map (fn [idx]
-           (calculate-socket-position idx cnt))
+           (calculate-socket-x-position idx cnt))
          (range cnt))))
 
 (defn find-socket-position [socket sockets]
   (let [grouped-sockets (group-by :socket/type sockets)
         {inputs :socket.type/input outputs :socket.type/output} grouped-sockets]
      (or (some-> inputs
-           (zipmap (calculate-socket-positions inputs))
+           (zipmap (calculate-sockets-x-positions inputs))
            (get socket)
            (vector -5))
          (some-> outputs
-           (zipmap (calculate-socket-positions outputs))
+           (zipmap (calculate-sockets-x-positions outputs))
            (get socket)
            (vector 45)))))
 
@@ -235,8 +235,8 @@
            {:keys [factory/sockets]} :instance/factory
            :as instance} (om/props this)
           {inputs :socket.type/input outputs :socket.type/output} (group-by :socket/type sockets)
-          input-xs (calculate-socket-positions inputs)
-          output-xs (calculate-socket-positions outputs)]
+          input-xs (calculate-sockets-x-positions inputs)
+          output-xs (calculate-sockets-x-positions outputs)]
       (dom/g nil
         (map #(render-socket instance %1 (+ x %2) (- y 5)) inputs input-xs)
         (map #(render-socket instance %1 (+ x %2) (+ 45 y)) outputs output-xs))))
