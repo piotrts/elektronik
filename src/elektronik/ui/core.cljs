@@ -27,9 +27,8 @@
    :instance-inspector instance-inspector/InstanceInspector})
 
 (def panel-id->factory
-  {:query-inspector query-inspector/query-inspector
-   :state-inspector state-inspector/state-inspector
-   :instance-inspector instance-inspector/instance-inspector})
+  (zipmap (keys panel-id->component)
+          (map om/factory (vals panel-id->component))))
 
 (def shared
   {:panel-id->component panel-id->component
