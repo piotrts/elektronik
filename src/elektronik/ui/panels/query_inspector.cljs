@@ -17,5 +17,3 @@
           (with-out-str
             (pprint/pprint
               (parser {:state app-state} root-query))))))))
-
-(def query-inspector (om/factory QueryInspector))

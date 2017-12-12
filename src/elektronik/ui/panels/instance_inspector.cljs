@@ -19,5 +19,3 @@
                                   :value value})))
                selected)
           "Nothing is selected")))))
-
-(def instance-inspector (om/factory InstanceInspector))

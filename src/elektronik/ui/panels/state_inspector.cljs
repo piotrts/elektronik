@@ -13,5 +13,3 @@
         (dom/pre nil
           (with-out-str
             (pprint/pprint (-> this om/get-reconciler om/app-state deref))))))))
-
-(def state-inspector (om/factory StateInspector))
