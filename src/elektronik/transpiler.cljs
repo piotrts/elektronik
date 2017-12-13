@@ -3,8 +3,8 @@
 ;; work in progress, quick and dirty
 (defn collect-instances [links]
   (mapcat (fn [link]
-            (let [{[_ from-id] :link/from
-                   [_ to-id] :link/to} link]
+            (let [{{[_ from-id] :instance/ident}  :link/from
+                   {[_ to-id] :instance/ident} :link/to} link]
               [from-id to-id]))
           links))
 
@@ -22,8 +22,8 @@
                              [instance {}])
                            (collect-instances links)))]
     (reduce (fn [graph link]
-              (let [{[_ from-id] :link/from
-                     [_ to-id] :link/to} link]
+              (let [{{[_ from-id] :instance/ident}  :link/from
+                     {[_ to-id] :instance/ident} :link/to} link]
                 (update-in graph [to-id :deps] (fnil conj []) from-id)))
             empty-graph
             links)))
@@ -47,4 +47,4 @@
                    :fn/args (replace fns deps)})))
             dependency-graph))))
 
-(state->ast @(om.next/app-state elektronik.core/reconciler))
+;(state->ast @(om.next/app-state elektronik.core/reconciler))
