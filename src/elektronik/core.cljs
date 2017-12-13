@@ -32,6 +32,13 @@
                       #:socket{:id :socket.id/math.subtraction.result
                                :type :socket.type/output}]})
 
+(def number-component-factory
+  #:factory{:id :type/number
+            :name "1" ;; TODO temporary, make this editable
+            :desc "A number"
+            :sockets [#:socket{:id :socket.id/type.number.value
+                               :type :socket.type/output}]})
+
 (def app-state
   (let [instance-1-id (om/tempid)
         instance-2-id (om/tempid)
@@ -49,7 +56,7 @@
                            :expanded? true}]
      :selection/list []
      :instances/list [#:instance{:id instance-1-id
-                                 :factory addition-component-factory
+                                 :factory number-component-factory
                                  :x 10
                                  :y 10}
                       #:instance{:id instance-2-id
@@ -57,15 +64,15 @@
                                  :x 110
                                  :y 50}
                       #:instance{:id instance-3-id
-                                 :factory subtraction-component-factory
+                                 :factory number-component-factory
                                  :x 210
                                  :y 10}]
      :links/list [#:link{:from {:instance/ident [:instances/by-id instance-1-id]
-                                :socket/ident [:socket.type/output :socket.id/math.addition.result]}
+                                :socket/ident [:socket.type/output :socket.id/type.number.value]}
                          :to {:instance/ident [:instances/by-id instance-2-id]
                               :socket/ident [:socket.type/input :socket.id/math.subtraction.x]}}
                   #:link{:from {:instance/ident [:instances/by-id instance-3-id]
-                                :socket/ident [:socket.type/output :socket.id/math.subtraction.result]}
+                                :socket/ident [:socket.type/output :socket.id/type.number.value]}
                          :to {:instance/ident [:instances/by-id instance-2-id]
                               :socket/ident [:socket.type/input :socket.id/math.subtraction.y]}}]}))
 
